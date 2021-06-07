@@ -1,43 +1,43 @@
 version: '3.7'
 services:
-  bitcoind:
-    build:
-      context: ./provisioning/bitcoin
-    ports:
-      - "18443:18443"
-      - "18444:18444"
-    command: 
-      -chain=regtest
-      -disablewallet=0
-      -printtoconsole
-      -txindex=1
-      -server=1
-      -rpcallowip=0.0.0.0/0
-      -rpcbind=0.0.0.0
-      -rpcuser=blockstack
-      -rpcpassword=blockstack
-    networks:
-      - mocknet
+  # bitcoind:
+  #   build:
+  #     context: ./provisioning/bitcoin
+  #   ports:
+  #     - "18443:18443"
+  #     - "18444:18444"
+  #   command: 
+  #     -chain=regtest
+  #     -disablewallet=0
+  #     -printtoconsole
+  #     -txindex=1
+  #     -server=1
+  #     -rpcallowip=0.0.0.0/0
+  #     -rpcbind=0.0.0.0
+  #     -rpcuser=blockstack
+  #     -rpcpassword=blockstack
+  #   networks:
+  #     - mocknet
 
-  bitcoind-fill-faucet:
-    image: byrnedo/alpine-curl
-    depends_on:
-      - bitcoind
-    restart: on-failure
-    command: |
-      -f -u blockstack:blockstack --data-binary '{"jsonrpc": "1.0", "id":"c", "method": "generatetoaddress", "params": [110, "mrzLDS7LT3otAnpiRWGYkWipdnAZJaXAZQ"] }' -H 'content-type: text/plain;' http://bitcoind:18443
-    networks:
-      - mocknet
+  # bitcoind-fill-faucet:
+  #   image: byrnedo/alpine-curl
+  #   depends_on:
+  #     - bitcoind
+  #   restart: on-failure
+  #   command: |
+  #     -f -u blockstack:blockstack --data-binary '{"jsonrpc": "1.0", "id":"c", "method": "generatetoaddress", "params": [110, "mrzLDS7LT3otAnpiRWGYkWipdnAZJaXAZQ"] }' -H 'content-type: text/plain;' http://bitcoind:18443
+  #   networks:
+  #     - mocknet
 
-  bitcoind-createwallet:
-    image: byrnedo/alpine-curl
-    depends_on:
-      - bitcoind
-    restart: on-failure
-    command: |
-      -f -u blockstack:blockstack --data-binary '{"jsonrpc": "1.0", "id": "curltest", "method": "createwallet", "params": ["testwallet"]}' -H 'content-type: text/plain;' http://bitcoind:18443
-    networks:
-      - mocknet
+  # bitcoind-createwallet:
+  #   image: byrnedo/alpine-curl
+  #   depends_on:
+  #     - bitcoind
+  #   restart: on-failure
+  #   command: |
+  #     -f -u blockstack:blockstack --data-binary '{"jsonrpc": "1.0", "id": "c", "method": "createwallet", "params": ["testwallet"]}' -H 'content-type: text/plain;' http://bitcoind:18443
+  #   networks:
+  #     - mocknet
 
   postgres:
     image: "postgres:12.2"
@@ -68,8 +68,6 @@ services:
       - ./volumes/mocknet/stacks-blockchain:/tmp/stacks-blockchain-data
     networks:
       - mocknet
-    depends_on:
-      - bitcoind-fill-faucet
   
   explorer:
     image: blockstack/explorer
