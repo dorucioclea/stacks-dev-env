@@ -102,3 +102,6 @@ dist
 
 # TernJS port file
 .tern-port
+volumes/mocknet/*
+!volumes/.gitkeep
+!volumes/mocknet/.gitkeep
