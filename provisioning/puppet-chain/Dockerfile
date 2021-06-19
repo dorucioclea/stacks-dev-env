@@ -1,7 +1,9 @@
 FROM blockstack/stacks-blockchain as builder
 FROM alpine
 ARG BTC_URL="https://github.com/blockstackpbc/bitcoin-docker/releases/download/0.20.99.0.0/musl-v0.20.99.0.0.tar.gz"
+
 WORKDIR /
+
 COPY --from=builder /bin/puppet-chain /bin/
 
 RUN apk add --update \
