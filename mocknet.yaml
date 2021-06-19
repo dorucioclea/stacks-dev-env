@@ -32,6 +32,7 @@ services:
   # bitcoind-createwallet:
   #   image: byrnedo/alpine-curl
   #   depends_on:
+
   #     - bitcoind
   #   restart: on-failure
   #   command: |
@@ -103,7 +104,7 @@ services:
       - "3999:3999"
       - "9153:9153"
     volumes:
-      - ./stacks-blockchain/:/app/config
+      - ./volumes/mocknet/stacks-blockchain-api/:/app/config
     networks:
       - mocknet
     depends_on: 
