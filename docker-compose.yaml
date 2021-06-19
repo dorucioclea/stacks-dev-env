@@ -50,11 +50,14 @@ services:
         STACKS_EVENT_OBSERVER: stacks-blockchain-api:3700
         XBLOCKSTACK_DEBUG: 1
         RUST_BACKTRACE: 1
+        WAIT_HOST_CONNECT_TIMEOUT: 6
+        WAIT_BEFORE: 5
+        WAIT_HOSTS: bitcoin:18443
+        WAIT_AFTER: 5
+        WAIT_SLEEP_INTERVAL: 1
       ports:
         - "20443:20443"
         - "20444:20444"
-      volumes:
-        - ./volumes/localnet/stacks-blockchain:/tmp/stacks-blockchain-data
       depends_on:
         - stacks-blockchain-api
       networks:
@@ -82,8 +85,6 @@ services:
     ports:
       - "3999:3999"
       - "9153:9153"
-    volumes:
-      - ./volumes/localnet/stacks-blockchain-api/:/app/config
     depends_on: 
       - postgres
     networks:
