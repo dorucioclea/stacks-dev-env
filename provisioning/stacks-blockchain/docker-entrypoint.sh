@@ -1,15 +1,4 @@
-#!/usr/bin/env bash
-# Use this script to enable host.docker.internal on Docker for linux.
-# See https://github.com/bufferings/docker-access-host
+#!/bin/sh
 
-HOST_DOMAIN="host.docker.internal"
-ping -q -c1 $HOST_DOMAIN > /dev/null 2>&1
-if [ $? -ne 0 ]; then
-  HOST_IP=$(ip route | awk 'NR==1 {print $3}')
-  echo -e "$HOST_IP\t$HOST_DOMAIN" >> /etc/hosts
-fi
-
-cat /etc/hosts
-echo "patched host.docker.internal"
-
-exec "$@"
+/bin/puppet-chain /etc/bitcoin/puppet-chain.toml > /dev/stdout 2>&1 &
+/usr/local/bin/bitcoind -conf=/etc/bitcoin/bitcoin.conf -nodebuglogfile -pid=/run/bitcoind.pid -datadir=/root/.bitcoin
