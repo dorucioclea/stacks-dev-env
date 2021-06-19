@@ -4,15 +4,9 @@ FROM debian:stretch
 
 ## Add the wait script to the image
 
-RUN chmod +x /wait
-
 RUN apt-get update && \
     apt-get install dos2unix && \
     apt-get clean
-
-COPY wait-for-it.sh /bin/wait-for-it.sh
-RUN dos2unix /bin/wait-for-it.sh
-RUN chmod +x /bin/wait-for-it.sh
 
 COPY docker-entrypoint.sh /bin/
 RUN dos2unix /bin/docker-entrypoint.sh
