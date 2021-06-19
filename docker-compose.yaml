@@ -87,7 +87,7 @@ services:
       - "3999:3999"
       - "9153:9153"
     volumes:
-      - /bns-data:/bns-data
+      - ./bns-data:/bns-data
     depends_on: 
       - postgres
     networks:
