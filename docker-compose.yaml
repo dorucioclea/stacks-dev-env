@@ -1,0 +1,78 @@
+version: '3.7'
+services:
+  bitcoin:
+    build:
+        context: ./provisioning/puppet-chain
+    container_name: bitcoin
+    restart: on-failure
+    expose:
+      - 18443
+      - 28444
+    environment:
+      - DYNAMIC_GENESIS_TIMESTAMP=1
+      - RUST_BACKTRACE=1
+    networks:
+      - localnet
+
+  postgres:
+    container_name: postgres
+    image: "postgres:12.2"
+    ports:
+      - "5490:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: stacks_blockchain_api
+      POSTGRES_PORT: 5432
+    networks:
+      - localnet
+
+  stacks-blockchain:
+      build:
+        context: ./provisioning/stacks-blockchain
+      restart: on-failure
+      environment:
+        STACKS_EVENT_OBSERVER: stacks-blockchain-api:3700
+        XBLOCKSTACK_DEBUG: 1
+        RUST_BACKTRACE: 1
+      ports:
+        - "20443:20443"
+        - "20444:20444"
+      volumes:
+        - ./volumes/localnet/stacks-blockchain:/tmp/stacks-blockchain-data
+      depends_on:
+        - stacks-blockchain-api
+      networks:
+        - localnet
+
+  stacks-blockchain-api:
+    container_name: stacks-blockchain-api
+    image: blockstack/stacks-blockchain-api:latest
+    restart: on-failure
+    environment:
+      PG_HOST: postgres
+      PG_PORT: 5432
+      PG_USER: postgres
+      PG_PASSWORD: postgres
+      PG_DATABASE: stacks_blockchain_api
+      STACKS_CORE_EVENT_PORT: 3700
+      STACKS_CORE_EVENT_HOST: http://0.0.0.0
+      STACKS_BLOCKCHAIN_API_PORT: 3999
+      STACKS_BLOCKCHAIN_API_HOST: 0.0.0.0
+      STACKS_BLOCKCHAIN_API_DB: pg
+      STACKS_CORE_RPC_HOST: stacks-node-follower
+      STACKS_CORE_RPC_PORT: 20443
+      NODE_ENV: production
+      STACKS_CHAIN_ID: 2147483648
+    ports:
+      - "3999:3999"
+      - "9153:9153"
+    volumes:
+      - ./volumes/localnet/stacks-blockchain-api/:/app/config
+    depends_on: 
+      - postgres
+    networks:
+      - localnet
+
+networks:
+  localnet:
