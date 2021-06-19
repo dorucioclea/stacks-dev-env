@@ -12,7 +12,7 @@ services:
       - DYNAMIC_GENESIS_TIMESTAMP=1
       - RUST_BACKTRACE=1
     networks:
-      - localnet
+      - stacks-blockchain
 
   postgres:
     container_name: postgres
@@ -25,7 +25,7 @@ services:
       POSTGRES_DB: stacks_blockchain_api
       POSTGRES_PORT: 5432
     networks:
-      - localnet
+      - stacks-blockchain
 
   stacks-blockchain:
       build:
@@ -43,7 +43,7 @@ services:
       depends_on:
         - stacks-blockchain-api
       networks:
-        - localnet
+        - stacks-blockchain
 
   stacks-blockchain-api:
     container_name: stacks-blockchain-api
@@ -60,7 +60,7 @@ services:
       STACKS_BLOCKCHAIN_API_PORT: 3999
       STACKS_BLOCKCHAIN_API_HOST: 0.0.0.0
       STACKS_BLOCKCHAIN_API_DB: pg
-      STACKS_CORE_RPC_HOST: stacks-node-follower
+      STACKS_CORE_RPC_HOST: stacks-blockchain
       STACKS_CORE_RPC_PORT: 20443
       NODE_ENV: production
       STACKS_CHAIN_ID: 2147483648
@@ -72,7 +72,9 @@ services:
     depends_on: 
       - postgres
     networks:
-      - localnet
+      - stacks-blockchain
 
 networks:
-  localnet:
+  stacks-blockchain:
+    driver: bridge
+    name: stacks-blockchain
