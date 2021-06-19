@@ -90,6 +90,17 @@ services:
     networks:
       - stacks-blockchain
 
+  alpine:
+    build:
+      context: ./provisioning/stacks-blockchain
+      dockerfile: Dockerfile
+    container_name: bns_data
+    volumes:
+      - ../persistent-data/bns-data:/bns-data
+    env_file:
+      - ../.env
+    command:  sh -c ./setup-bns.sh
+
 networks:
   stacks-blockchain:
     driver: bridge
