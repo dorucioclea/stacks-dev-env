@@ -5,7 +5,7 @@ miner_address = "mtFzK54XtpktHj7fKonFExEPEGkUMsiXdy"
 faucet_address = "n2pGfZaAVztWqFzuy8iLS3VSuHB2SimWUR"
 bitcoind_rpc_host = "localhost:28443"
 bitcoind_rpc_user = "blockstack"
-bitcoind_rpc_pass = "blockstack"
+bitcoind_rpc_pass = "blockstacksystem"
 genesis_timestamp = 1588615296
 whitelisted_rpc_calls = [
     "listunspent",
