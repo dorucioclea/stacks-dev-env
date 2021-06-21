@@ -82,7 +82,7 @@ services:
       STACKS_CORE_RPC_PORT: 20443
       NODE_ENV: production
       STACKS_CHAIN_ID: 2147483648
-      BNS_IMPORT_DIR: /bns-data
+      # BNS_IMPORT_DIR: /bns-data
     ports:
       - "3999:3999"
       - "9153:9153"
