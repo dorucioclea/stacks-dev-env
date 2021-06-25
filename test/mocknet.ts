@@ -1,6 +1,6 @@
 import { pubKeyfromPrivKey, publicKeyToString } from "@stacks/transactions";
 
-// from personal public Stacks.toml file
+// from Stacks config.toml file
 export const ADDR1 = "ST2ZRX0K27GW0SP3GJCEMHD95TQGJMKB7G9Y0X1MH";
 export const ADDR2 = "ST26FVX16539KKXZKJN098Q08HRX3XBAP541MFS0P";
 export const ADDR3 = "ST3CECAKJ4BH08JYY7W53MC81BYDT4YDA5M7S5F53";
