@@ -4,7 +4,6 @@ import {
   ProviderRegistry,
   Result,
 } from "@blockstack/clarity";
-import { assert } from "chai";
 
 describe("dao token contract test suite", () => {
   let daoTokenClient: Client;
@@ -13,11 +12,13 @@ describe("dao token contract test suite", () => {
 
   before(async () => {
     provider = await ProviderRegistry.createProvider();
+    
     daoTokenTraitClient = new Client(
       "S1G2081040G2081040G2081040G208105NK8PE5.dao-token-trait",
       "dao-token-trait",
       provider
     );
+    
     daoTokenClient = new Client(
       "S1G2081040G2081040G2081040G208105NK8PE5.dao-token",
       "dao-token",
