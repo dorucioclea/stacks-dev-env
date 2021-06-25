@@ -52,3 +52,21 @@ VsCode is recomended for development.
 ### Reasoning
 
 This exists so we can interact with the stacks-blockchain, create test addresses, fill them with test tokens (currently this takes longer on the official testnet) and iteract with the clarity smart contracts through integration tests.
+
+### Useful commands
+
+* Generate stx address
+
+stx make_keychain -t -I "http://localhost:20443" > cli_keychain.json
+
+* See balance
+
+stx balance <address> -t -I "http://localhost:20443"
+
+* Estimate transaction fee
+
+stx send_tokens <address> 1000 800 0 539e35c740079b79f931036651ad01f76d8fe1496dbd840ba9e62c7e7b355db001 0 539e35c740079b79f931036651ad01f76d8fe1496dbd840ba9e62c7e7b355db001 -t -I "http://localhost:20443" -e
+
+* Send tokens to address 
+
+stx send_tokens <address> 1000 800 0 539e35c740079b79f931036651ad01f76d8fe1496dbd840ba9e62c7e7b355db001 0 539e35c740079b79f931036651ad01f76d8fe1496dbd840ba9e62c7e7b355db001 -t -I "http://localhost:20443"
