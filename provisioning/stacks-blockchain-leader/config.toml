@@ -5,6 +5,7 @@ seed = "0000000000000000000000000000000000000000000000000000000000000000"
 local_peer_seed = "0000000000000000000000000000000000000000000000000000000000000000"
 miner = true
 # prometheus_bind = "127.0.0.1:4000"
+
 pox_sync_sample_secs = 10
 wait_time_for_microblocks = 0
 
@@ -17,6 +18,81 @@ peer_port = 18444
 magic_byte = "X2"
 username = "blockstack"
 password = "blockstacksystem"
+
+
+block_time = 7000
+miner_address = "mtFzK54XtpktHj7fKonFExEPEGkUMsiXdy"
+faucet_address = "n2pGfZaAVztWqFzuy8iLS3VSuHB2SimWUR"
+bitcoind_rpc_host = "localhost:28443"
+bitcoind_rpc_user = "blockstack"
+bitcoind_rpc_pass = "blockstacksystem"
+genesis_timestamp = 1588615296
+whitelisted_rpc_calls = [
+    "listunspent",
+    "listwallets",
+    "createwallet",
+    "importaddress",
+    "sendrawtransaction",
+    "getrawtransaction",
+    "scantxoutset",
+    "getrawmempool",
+    "getblockhash",
+]
+
+[[blocks]]
+count = 1
+block_time = 10000
+ignore_txs = false
+
+[[blocks]]
+count = 3
+block_time = 20000
+ignore_txs = false
+
+[[blocks]]
+count = 2
+block_time = 1000
+ignore_txs = true
+
+[[blocks]]
+count = 3
+block_time = 20000
+ignore_txs = true
+
+[[blocks]]
+count = 2
+block_time = 1000
+ignore_txs = true
+
+[[blocks]]
+count = 3
+block_time = 20000
+ignore_txs = false
+
+[[blocks]]
+count = 2
+block_time = 1000
+ignore_txs = true
+
+[[blocks]]
+count = 3
+block_time = 20000
+ignore_txs = false
+
+[[blocks]]
+count = 2
+block_time = 1000
+ignore_txs = true
+
+[[blocks]]
+count = 3
+block_time = 20000
+ignore_txs = false
+
+[[blocks]]
+count = 2
+block_time = 1000
+ignore_txs = true
 
 [[ustx_balance]]
 # "mnemonic": "point approve language letter cargo rough similar wrap focus edge polar task olympic tobacco cinnamon drop lawn boring sort trade senior screen tiger climb",
@@ -45,3 +121,12 @@ amount = 100000000000000
 # "btcAddress": "mkEDDqbELrKYGUmUbTAyQnmBAEz4V1MAro",
 address = "STSTW15D618BSZQB85R058DS46THH86YQQY6XCB7"
 amount = 100000000000000
+
+
+# Faucet:
+# Private Key          cTYqAVPS7uJTAcxyzkXWjmRGoCjkPcb38wZVRjyXov1RiRDWPQj3
+# Public Key           02327e09dc18fee1d51fe2b19b487e01eba4e6adcb325bf102213fce7bbdcde6bd
+# Address              n3k15aVS4rEWhVYn4YfAFjD8Em5mmsducg
+# Format               p2pkh
+# Network              testnet
+# Compressed           true
