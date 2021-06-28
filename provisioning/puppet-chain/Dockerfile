@@ -30,6 +30,8 @@ COPY ./docker-entrypoint.sh /docker-entrypoint.sh
 RUN dos2unix /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 
+RUN chmod +x /bin/puppet-chain
+
 COPY bitcoin.conf /etc/bitcoin/bitcoin.conf
 RUN dos2unix /etc/bitcoin/bitcoin.conf
 
