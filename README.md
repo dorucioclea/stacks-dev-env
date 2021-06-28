@@ -70,3 +70,10 @@ stx send_tokens <address> 1000 800 0 539e35c740079b79f931036651ad01f76d8fe1496db
 * Send tokens to address 
 
 stx send_tokens <address> 1000 800 0 539e35c740079b79f931036651ad01f76d8fe1496dbd840ba9e62c7e7b355db001 0 539e35c740079b79f931036651ad01f76d8fe1496dbd840ba9e62c7e7b355db001 -t -I "http://localhost:20443"
+
+Where the private key is taken from the config.toml configuration file of /provisioning/stacks-blockchain
+
+* Deploy contract
+
+stx deploy_contract ./contracts/dao-token-trait.clar dao-token-trait 200 0 <private_key> -t -I "http://localhost:20443"
+
