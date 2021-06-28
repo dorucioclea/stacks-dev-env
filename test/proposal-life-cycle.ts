@@ -40,6 +40,7 @@ describe("dao proposal suite", () => {
       functionArgs: [],
       senderKey: secretKey,
       network,
+      anchorMode: 3
     });
     await handleTransaction(tx);
   });
@@ -62,6 +63,7 @@ describe("dao proposal suite", () => {
         postConditionMode: PostConditionMode.Allow,
         senderKey: secretKey,
         network,
+        anchorMode: 3
       });
       let result = await handleTransaction(tx);
       console.log(result);
@@ -87,6 +89,7 @@ describe("dao proposal suite", () => {
         postConditionMode: PostConditionMode.Allow,
         senderKey: secretKey,
         network,
+        anchorMode: 3
       });
       let result = await handleTransaction(tx);
       console.log(result);
@@ -125,6 +128,7 @@ describe("dao proposal suite", () => {
         postConditionMode: PostConditionMode.Allow,
         senderKey: secretKey,
         network,
+        anchorMode: 3
       });
       const tx2 = await makeContractCall({
         contractAddress,
@@ -134,6 +138,7 @@ describe("dao proposal suite", () => {
         postConditionMode: PostConditionMode.Allow,
         senderKey: testnetKeyMap[ADDR2].secretKey,
         network,
+        anchorMode: 3
       });
       const tx3 = await makeContractCall({
         contractAddress,
@@ -143,6 +148,7 @@ describe("dao proposal suite", () => {
         postConditionMode: PostConditionMode.Allow,
         senderKey: testnetKeyMap[ADDR3].secretKey,
         network,
+        anchorMode: 3
       });
       await Promise.all([
         handleTransaction(tx1),
@@ -171,6 +177,7 @@ describe("dao proposal suite", () => {
         postConditionMode: PostConditionMode.Allow,
         senderKey: secretKey,
         network,
+        anchorMode: 3
       });
       let result = await handleTransaction(tx);
 
@@ -199,6 +206,7 @@ describe("dao proposal suite", () => {
       postConditionMode: PostConditionMode.Allow,
       senderKey: testnetKeyMap[ADDR3].secretKey,
       network,
+      anchorMode: 3
     });
     try {
       await handleTransaction(tx);
@@ -230,6 +238,7 @@ describe("dao proposal suite", () => {
       postConditionMode: PostConditionMode.Allow,
       senderKey: testnetKeyMap[ADDR3].secretKey,
       network,
+      anchorMode: 3
     });
     try {
       await handleTransaction(tx);

@@ -1,56 +1,39 @@
-//
-// utils functions
-
 import {
   broadcastTransaction,
   makeContractDeploy,
   StacksTransaction,
   TxBroadcastResultOk,
   TxBroadcastResultRejected,
+  makeContractCall,
+  SignedContractCallOptions,
+  SignedMultiSigContractCallOptions
 } from "@stacks/transactions";
-import { StacksTestnet } from "@stacks/network";
+import { StacksTestnet, StacksMainnet } from "@stacks/network";
+require('dotenv').config();
 
 import * as fs from "fs";
 const fetch = require("node-fetch");
 
-import { ADDR1, testnetKeyMap } from "./mocknet";
+import { ADDR1, ADDR4, testnetKeyMap } from "./mocknet";
 
-export const local = true;
-export const mocknet = true;
-export const noSidecar = true;
 
-const STACKS_CORE_API_URL = local
-  ? noSidecar
-    ? "http://localhost:20443"
-    : "http://localhost:3999"
-  : "https://stacks-node-api.blockstack.org";
-export const STACKS_API_URL = local
-  ? "http://localhost:3999"
-  : "https://stacks-node-api.blockstack.org";
+const STACKS_CORE_API_URL = "http://localhost:3999";
 export const network = new StacksTestnet();
 network.coreApiUrl = STACKS_CORE_API_URL;
 
-/* Replace with your private key for testnet deployment */
+const keys = testnetKeyMap[ADDR1];
 
-const keys = mocknet
-  ? testnetKeyMap[ADDR1]
-  : JSON.parse(
-      fs
-        .readFileSync("../../blockstack/stacks-blockchain/keychain.json")
-        .toString()
-    ).paymentKeyInfo;
+export const secretKey = keys.secretKey;
+export const contractAddress = keys.address;
+const deployKey = testnetKeyMap[ADDR4];
+export const deployContractAddress = deployKey.address;
+export const secretDeployKey = deployKey.secretKey;
 
-export const secretKey = mocknet ? keys.secretKey : keys.privateKey;
-export const contractAddress = mocknet ? keys.address : keys.address.STACKS;
-
-//
 export async function handleTransaction(transaction: StacksTransaction) {
   const result = await broadcastTransaction(transaction, network);
   console.log(result);
   if ((result as TxBroadcastResultRejected).error) {
-    if (
-      (result as TxBroadcastResultRejected).reason === "ContractAlreadyExists"
-    ) {
+    if ((result as TxBroadcastResultRejected).reason === "ContractAlreadyExists") {
       console.log("already deployed");
       return "" as TxBroadcastResultOk;
     } else {
@@ -71,19 +54,35 @@ export async function handleTransaction(transaction: StacksTransaction) {
   return result as TxBroadcastResultOk;
 }
 
-export async function deployContract(
-  contractName: string,
-  changeCode: (string) => string = unchanged
-) {
-  const codeBody = fs
-    .readFileSync(`./contracts/${contractName}.clar`)
-    .toString();
+export async function callContractFunction(contractName: string, functionName: string, sender: any, args: any) {
+  const txOptions: SignedContractCallOptions | SignedMultiSigContractCallOptions = {
+    contractAddress: deployContractAddress,
+    contractName: contractName,
+    functionName: functionName,
+    functionArgs: args,
+    senderKey: sender,
+    network,
+    postConditionMode: 0x01, // PostconditionMode.Allow
+    anchorMode: 3
+  };
+
+  console.log('Sending transaction', contractName);
+  const transaction = await makeContractCall(txOptions);
+  console.log(transaction);
+
+  return handleTransaction(transaction);
+}
+
+export async function deployContract(contractName: string, changeCode: (str: string) => string = unchanged) {
+  let codeBody = fs.readFileSync(`./contracts/${contractName}.clar`).toString();;
   var transaction = await makeContractDeploy({
     contractName,
     codeBody: changeCode(codeBody),
-    senderKey: secretKey,
+    senderKey: secretDeployKey,
     network,
+    anchorMode: 3
   });
+
   console.log(`deploy contract ${contractName}`);
   return handleTransaction(transaction);
 }
@@ -93,24 +92,14 @@ function timeout(ms: number) {
 }
 
 async function processing(tx: String, count: number = 0): Promise<boolean> {
-  return noSidecar
-    ? processingWithoutSidecar(tx, count)
-    : processingWithSidecar(tx, count);
-}
-
-async function processingWithoutSidecar(
-  tx: String,
-  count: number = 0
-): Promise<boolean> {
-  await timeout(10000);
-  return true;
+  return processingWithSidecar(tx, count);
 }
 
 async function processingWithSidecar(
   tx: String,
   count: number = 0
 ): Promise<boolean> {
-  const url = `${STACKS_API_URL}/extended/v1/tx/${tx}`;
+  const url = `${STACKS_CORE_API_URL}/extended/v1/tx/${tx}`;
   var result = await fetch(url);
   var value = await result.json();
   console.log(count);
@@ -121,21 +110,17 @@ async function processingWithSidecar(
   }
   if (value.tx_status === "pending") {
     console.log(value);
-  } else if (count === 10) {
+  } else if (count === 3) {
     console.log(value);
   }
 
-  if (count > 30) {
-    console.log("failed after 30 trials");
+  if (count > 20) {
+    console.log("failed after 10 tries");
     console.log(value);
     return false;
   }
 
-  if (mocknet) {
-    await timeout(5000);
-  } else {
-    await timeout(120000);
-  }
+  await timeout(3000);
   return processing(tx, count + 1);
 }
 
