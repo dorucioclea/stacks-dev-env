@@ -6,6 +6,8 @@ import { Client, NativeClarityBinProvider } from '@blockstack/clarity';
 import { getDefaultBinaryFilePath } from '@blockstack/clarity-native-bin';
 import { getTempFilePath } from '@blockstack/clarity/lib/utils/fsUtil';
 
+import { promises as fileSystemPath } from 'fs';
+
 class HexUtils {
     public hex2bn(hex: string): BN {
         return new BN(hex);
@@ -28,7 +30,8 @@ export const toCamelCase = (input: string | number | symbol, titleCase?: boolean
 };
 
 export const getContractNameFromPath = (path: string) => {
-  const contractPaths = path.split('/');
+
+  const contractPaths = path.normalize().split('\\');
   const filename = contractPaths[contractPaths.length - 1];
   const [contractName] = filename.split('.');
   return contractName;
