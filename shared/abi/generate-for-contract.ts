@@ -1,13 +1,11 @@
-import {
-  generateIndexFile,
-  generateInterface,
-  generateInterfaceFile,
-  generateTypesFile,
-} from "./files";
 import { getContractNameFromPath } from "../util";
 import { NativeClarityBinProvider } from "@blockstack/clarity";
-import { resolve, relative, dirname } from "path";
+import { resolve, relative } from "path";
 import { mkdir, writeFile } from "fs/promises";
+import { generateTypesFile } from "./generate-type-file";
+import { generateIndexFile } from "./generate-index-file";
+import { generateInterfaceFile } from "./generate-interface-file";
+import { generateInterface } from "./generate-interface";
 
 export async function generateFilesForContract({
   contractFile: _contractFile,
@@ -23,7 +21,7 @@ export async function generateFilesForContract({
   dirName?: string;
 }) {
   const contractFile = resolve(process.cwd(), _contractFile);
-  
+
   const contractName = getContractNameFromPath(contractFile);
 
   const abi = await generateInterface({
