@@ -1,4 +1,5 @@
-import { getContractNameFromPath, toCamelCase } from "../util";
+import { getContractNameFromPath } from "../utils/contract-name-for-path";
+import { toCamelCase } from "../utils/to-camel-case";
 
 export function generateIndexFile({
   contractFile,
@@ -12,7 +13,9 @@ export function generateIndexFile({
   const varName = toCamelCase(contractName);
   const contractType = `${contractTitle}Contract`;
 
-  const fileContents = `import { proxy, BaseProvider, Contract } from '@clarigen/core';
+  const fileContents = `import { Contract } from '../../shared/types';
+import { proxy } from '../../shared/test-utils/proxy';
+import { BaseProvider } from '../../shared/providers/base-provider';
 import type { ${contractType} } from './types';
 import { ${contractTitle}Interface } from './abi';
 export type { ${contractType} } from './types';
