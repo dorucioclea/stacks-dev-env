@@ -8,16 +8,6 @@ import { getTempFilePath } from '@blockstack/clarity/lib/utils/fsUtil';
 
 import { promises as fileSystemPath } from 'fs';
 
-class HexUtils {
-    public hex2bn(hex: string): BN {
-        return new BN(hex);
-    }
-
-    public cv2Hex (clarityValue: ClarityValue): string {
-        return `0x${serializeCV(clarityValue).toString('hex')}`;
-    } 
-}
-
 export const toCamelCase = (input: string | number | symbol, titleCase?: boolean) => {
   const inputStr = typeof input === 'string' ? input : String(input);
   const [first, ...parts] = inputStr.replace('!', '').split('-');

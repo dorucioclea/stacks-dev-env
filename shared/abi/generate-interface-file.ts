@@ -2,7 +2,7 @@ import { NativeClarityBinProvider } from "@blockstack/clarity";
 import { getTempFilePath } from "@blockstack/clarity/lib/utils/fsUtil";
 import { getDefaultBinaryFilePath } from "@blockstack/clarity-native-bin";
 
-import { ClarityAbi } from "../clarity-types";
+import { ClarityAbi } from "../clarity/types";
 import { getContractNameFromPath, toCamelCase } from "../util";
 
 export function generateInterfaceFile({

@@ -1,5 +1,4 @@
 import { Client, NativeClarityBinProvider } from "@blockstack/clarity";
-import { deserializeCV } from "@stacks/transactions";
 import { join } from "path";
 import { deployContract } from "../adapter/deploy-contract";
 

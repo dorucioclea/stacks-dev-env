@@ -10,7 +10,6 @@ import {
 
 import { ok, err } from "neverthrow";
 import { BaseProvider } from "./base-provider";
-import { cvToValue, parseToCV } from "../clarity-types";
 import { Submitter, Transaction, TransactionResult } from "../transaction";
 import {
   ContractInstances,
@@ -25,6 +24,8 @@ import { deployUtilContract } from "../test-utils/deploy-util-contract";
 import { getContractIdentifier, getContractNameFromPath } from "../util";
 import { evalJson } from "../adapter/eval-json";
 import { executeJson } from "../adapter/execute-json";
+import { parseToCV } from '../clarity/parse-to-cv'
+import { cvToValue } from '../clarity/cv-to-value'
 
 export class TestProvider implements BaseProvider {
   clarityBin: NativeClarityBinProvider;

@@ -1,5 +1,5 @@
 import { NativeClarityBinProvider } from '@blockstack/clarity';
-import type { BaseProvider } from './base-provider';
+import type { BaseProvider } from './providers/base-provider';
 import { ResultAssets } from './transaction';
 
 export type ContractBuilder<T> = (provider: BaseProvider) => T;

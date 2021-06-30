@@ -1,4 +1,4 @@
-import { ClarityAbi } from "../clarity-types";
+import { ClarityAbi } from "../clarity/types";
 import { makeTypes } from "./utils";
 import { toCamelCase } from "../util";
 
