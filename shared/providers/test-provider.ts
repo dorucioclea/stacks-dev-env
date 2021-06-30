@@ -18,16 +18,13 @@ import {
   CreateOptions,
   FromContractOptions,
 } from "../types";
-import {
-  ClarinetAccounts,
-  deployContract,
-  evalJson,
-  executeJson,
-  getContractIdentifier,
-  getContractNameFromPath,
-  getDefaultClarityBin,
-} from "../util";
-import { deployUtilContract } from "../util-contract";
+import { deployContract } from "../adapter/deploy-contract";
+import { ClarinetAccounts } from "../adapter/types";
+import { getDefaultClarityBin } from "../adapter/get-default-clarity-bin";
+import { deployUtilContract } from "../test-utils/deploy-util-contract";
+import { getContractIdentifier, getContractNameFromPath } from "../util";
+import { evalJson } from "../adapter/eval-json";
+import { executeJson } from "../adapter/execute-json";
 
 export class TestProvider implements BaseProvider {
   clarityBin: NativeClarityBinProvider;
