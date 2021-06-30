@@ -9,7 +9,7 @@ import { NativeClarityBinProvider } from "@blockstack/clarity";
 import { resolve, relative, dirname } from "path";
 import { mkdir, writeFile } from "fs/promises";
 
-export const generateFilesForContract = async ({
+export async function generateFilesForContract({
   contractFile: _contractFile,
   outputFolder,
   provider,
@@ -21,25 +21,18 @@ export const generateFilesForContract = async ({
   provider?: NativeClarityBinProvider;
   contractAddress?: string;
   dirName?: string;
-}) => {
-
-
-  console.log(process.cwd())
-
+}) {
   const contractFile = resolve(process.cwd(), _contractFile);
+  
   const contractName = getContractNameFromPath(contractFile);
-
-  console.log('contract file', contractFile);
-  console.log('contract name ', contractName);
 
   const abi = await generateInterface({
     contractFile,
     provider,
     contractAddress,
   });
+
   const typesFile = generateTypesFile(abi, contractName);
-
-
   if (!contractAddress && process.env.NODE_ENV !== "test") {
     console.warn("Please provide an address with every contract.");
   }
@@ -48,8 +41,6 @@ export const generateFilesForContract = async ({
     contractFile: relative(process.cwd(), contractFile),
     address: contractAddress || "",
   });
-
-  console.log('index filie ', indexFile);
 
   const abiFile = generateInterfaceFile({ contractFile, abi });
 
@@ -60,4 +51,4 @@ export const generateFilesForContract = async ({
   await writeFile(resolve(outputPath, "abi.ts"), abiFile);
   await writeFile(resolve(outputPath, "index.ts"), indexFile);
   await writeFile(resolve(outputPath, "types.ts"), typesFile);
-};
+}
