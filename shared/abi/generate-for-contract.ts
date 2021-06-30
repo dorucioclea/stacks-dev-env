@@ -1,4 +1,4 @@
-import { getContractNameFromPath } from "../util";
+import { getContractNameFromPath } from "../utils/contract-name-for-path";
 import { NativeClarityBinProvider } from "@blockstack/clarity";
 import { resolve, relative } from "path";
 import { mkdir, writeFile } from "fs/promises";
