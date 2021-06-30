@@ -16,12 +16,31 @@ export const generateInterface = async ({
   provider?: NativeClarityBinProvider;
   contractAddress?: string;
 }): Promise<ClarityAbi> => {
+
+  console.log('inside generate interface')
+
   const binFile = getDefaultBinaryFilePath();
+
+
+  console.log('binfile', binFile);
+
   const dbFileName = getTempFilePath();
+
+
+  console.log('dbfilename', dbFileName);
+
   const provider =
     _provider ||
     (await NativeClarityBinProvider.create([], dbFileName, binFile));
+
+    console.log('Created provider');
+
   const contractName = getContractNameFromPath(contractFile);
+  
+  console.log('contractname' , contractName);
+
+
+  
   const receipt = await provider.runCommand([
     'launch',
     `${contractAddress}.${contractName}`,
@@ -36,6 +55,11 @@ export const generateInterface = async ({
   ${receipt.stderr}
     `);
   }
+
+  console.log('receipt', receipt.exitCode);
+
+  console.log('stdout', receipt.stdout);
+
   const output = JSON.parse(receipt.stdout);
   if (output.error) {
     const { initialization } = output.error;
@@ -110,7 +134,9 @@ export const ${varName}Info: Contract<${contractType}> = {
 };
 
 export const generateTypesFile = (abi: ClarityAbi, contractName: string) => {
+  console.log('in generate types file');
   const name = toCamelCase(contractName, true);
+  console.log('name ', name);
   const typings = makeTypes(abi);
   const fileContents = `import { ClarityTypes, Transaction } from '@clarigen/core';
 // prettier-ignore

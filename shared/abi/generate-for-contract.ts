@@ -6,8 +6,6 @@ import {
 } from "./files";
 import { getContractNameFromPath } from "../util";
 import { NativeClarityBinProvider } from "@blockstack/clarity";
-import { getTempFilePath } from "@blockstack/clarity/lib/utils/fsUtil";
-import { getDefaultBinaryFilePath } from "@blockstack/clarity-native-bin";
 import { resolve, relative, dirname } from "path";
 import { mkdir, writeFile } from "fs/promises";
 
@@ -24,8 +22,15 @@ export const generateFilesForContract = async ({
   contractAddress?: string;
   dirName?: string;
 }) => {
+
+
+  console.log(process.cwd())
+
   const contractFile = resolve(process.cwd(), _contractFile);
   const contractName = getContractNameFromPath(contractFile);
+
+  console.log('contract file', contractFile);
+  console.log('contract name ', contractName);
 
   const abi = await generateInterface({
     contractFile,
@@ -33,13 +38,19 @@ export const generateFilesForContract = async ({
     contractAddress,
   });
   const typesFile = generateTypesFile(abi, contractName);
+
+
   if (!contractAddress && process.env.NODE_ENV !== "test") {
     console.warn("Please provide an address with every contract.");
   }
+
   const indexFile = generateIndexFile({
     contractFile: relative(process.cwd(), contractFile),
     address: contractAddress || "",
   });
+
+  console.log('index filie ', indexFile);
+
   const abiFile = generateInterfaceFile({ contractFile, abi });
 
   const baseDir = outputFolder || resolve(process.cwd(), `tmp/${contractName}`);
