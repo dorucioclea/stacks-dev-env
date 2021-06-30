@@ -10,7 +10,7 @@ import {
   isClarityAbiTuple,
 } from "@stacks/transactions";
 import { ClarityAbi } from "../clarity/types";
-import { toCamelCase } from "../util";
+import { toCamelCase } from "../utils/to-camel-case";
 
 export const cvFromType = (val: ClarityAbiType) => {
   if (isClarityAbiPrimitive(val)) {

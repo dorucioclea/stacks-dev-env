@@ -21,7 +21,8 @@ import { deployContract } from "../adapter/deploy-contract";
 import { ClarinetAccounts } from "../adapter/types";
 import { getDefaultClarityBin } from "../adapter/get-default-clarity-bin";
 import { deployUtilContract } from "../test-utils/deploy-util-contract";
-import { getContractIdentifier, getContractNameFromPath } from "../util";
+import { getContractIdentifier } from "../utils/contract-identifier";
+import { getContractNameFromPath } from '../utils/contract-name-for-path';
 import { evalJson } from "../adapter/eval-json";
 import { executeJson } from "../adapter/execute-json";
 import { parseToCV } from '../clarity/parse-to-cv'

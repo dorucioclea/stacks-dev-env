@@ -2,7 +2,7 @@ import { NativeClarityBinProvider } from "@blockstack/clarity";
 import { getDefaultBinaryFilePath } from "@blockstack/clarity-native-bin";
 import { getTempFilePath } from "@blockstack/clarity/lib/utils/fsUtil";
 import { ClarityAbi } from "../clarity/types";
-import { getContractNameFromPath } from "../util";
+import { getContractNameFromPath } from "../utils/contract-name-for-path";
 
 export async function generateInterface({
     provider: _provider, contractFile, contractAddress = 'S1G2081040G2081040G2081040G208105NK8PE5',

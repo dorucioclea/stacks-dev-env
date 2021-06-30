@@ -1,6 +1,6 @@
 import { ClarityAbi } from "../clarity/types";
 import { makeTypes } from "./utils";
-import { toCamelCase } from "../util";
+import { toCamelCase } from "../utils/to-camel-case";
 
 export const generateTypesFile = (abi: ClarityAbi, contractName: string) => {
   console.log("in generate types file");
