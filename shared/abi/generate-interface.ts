@@ -11,30 +11,12 @@ export async function generateInterface({
     provider?: NativeClarityBinProvider;
     contractAddress?: string;
 }): Promise<ClarityAbi> {
-
-    console.log('inside generate interface');
-
     const binFile = getDefaultBinaryFilePath();
-
-
-    console.log('binfile', binFile);
-
     const dbFileName = getTempFilePath();
-
-
-    console.log('dbfilename', dbFileName);
-
     const provider = _provider ||
         (await NativeClarityBinProvider.create([], dbFileName, binFile));
 
-    console.log('Created provider');
-
     const contractName = getContractNameFromPath(contractFile);
-
-    console.log('contractname', contractName);
-
-
-
     const receipt = await provider.runCommand([
         'launch',
         `${contractAddress}.${contractName}`,
@@ -49,10 +31,6 @@ export async function generateInterface({
     ${receipt.stderr}
       `);
     }
-
-    console.log('receipt', receipt.exitCode);
-
-    console.log('stdout', receipt.stdout);
 
     const output = JSON.parse(receipt.stdout);
     if (output.error) {
