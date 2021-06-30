@@ -1,18 +1,45 @@
-;; define counter variable
 (define-data-var counter int 0)
 
-;; counter getter
+(define-constant decimals u8)
+
 (define-read-only (get-counter)
-  (ok (var-get counter)))
+  (var-get counter))
 
-;; increment method
 (define-public (increment)
-  (begin
-    (var-set counter (+ (var-get counter) 1))
-    (ok (var-get counter))))
+  (let
+    (
+      (current-val (var-get counter))
+      (next-val (+ current-val 1))
+      (sender tx-sender)
+    )
+    (var-set counter next-val)
+    (try! (mint))
+    (ok next-val)
+  )
+)
 
-;; decrement method
 (define-public (decrement)
-  (begin
-    (var-set counter (- (var-get counter) 1))
-    (ok (var-get counter))))
+  (let
+    (
+      (current-val (var-get counter))
+      (next-val (- current-val 1))
+    )
+    (var-set counter next-val)
+    (try! (mint))
+    (ok next-val)
+  )
+)
+
+(define-private (mint)
+  (let
+    (
+      (sender tx-sender)
+    )
+    (try! (as-contract (contract-call? .counter-coin mint sender (mint-amount))))
+    (ok true)
+  )
+)
+
+(define-private (mint-amount)
+  (pow u10 decimals)
+)
