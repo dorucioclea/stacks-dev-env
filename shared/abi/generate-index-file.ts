@@ -16,13 +16,17 @@ export function generateIndexFile({
   const fileContents = `import { Contract } from '../../shared/types';
 import { proxy } from '../../shared/test-utils/proxy';
 import { BaseProvider } from '../../shared/providers/base-provider';
+
 import type { ${contractType} } from './types';
 import { ${contractTitle}Interface } from './abi';
+
 export type { ${contractType} } from './types';
+
 export const ${varName}Contract = (provider: BaseProvider) => {
   const contract = proxy<${contractType}>(${contractTitle}Interface, provider);
   return contract;
 };
+
 export const ${varName}Info: Contract<${contractType}> = {
   contract: ${varName}Contract,
   address: '${address}',

@@ -18,7 +18,9 @@ export function generateInterfaceFile({
   const abiString = JSON.stringify(abi, null, 2);
 
   const fileContents = `import { ClarityAbi } from '../../shared/clarity/types';
+
 // prettier-ignore
+
 export const ${variableName}Interface: ClarityAbi = ${abiString};
 `;
 
