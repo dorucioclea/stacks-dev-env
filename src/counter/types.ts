@@ -4,7 +4,8 @@ import { ClarityTypes } from '../../shared/clarity/types';
 // prettier-ignore
 
 export interface CounterContract {
-  decrement: () => Transaction<number, null>;
-  increment: () => Transaction<number, null>;
-  getCounter: () => Promise<ClarityTypes.Response<number, null>>;
+
+  decrement: () => Transaction<number, number>;
+  increment: () => Transaction<number, number>;
+  getCounter: () => Promise<number>;
 }

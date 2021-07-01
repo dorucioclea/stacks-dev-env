@@ -2,7 +2,7 @@ import { ClarityAbi } from '../../shared/clarity/types';
 
 // prettier-ignore
 
-export const FtTraitInterface: ClarityAbi = {
+export const Sip10FtStandardInterface: ClarityAbi = {
   "functions": [],
   "fungible_tokens": [],
   "maps": [],

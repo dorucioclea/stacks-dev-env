@@ -5,13 +5,34 @@ import { ClarityAbi } from '../../shared/clarity/types';
 export const CounterInterface: ClarityAbi = {
   "functions": [
     {
+      "access": "private",
+      "args": [],
+      "name": "mint",
+      "outputs": {
+        "type": {
+          "response": {
+            "error": "uint128",
+            "ok": "bool"
+          }
+        }
+      }
+    },
+    {
+      "access": "private",
+      "args": [],
+      "name": "mint-amount",
+      "outputs": {
+        "type": "uint128"
+      }
+    },
+    {
       "access": "public",
       "args": [],
       "name": "decrement",
       "outputs": {
         "type": {
           "response": {
-            "error": "none",
+            "error": "uint128",
             "ok": "int128"
           }
         }
@@ -24,7 +45,7 @@ export const CounterInterface: ClarityAbi = {
       "outputs": {
         "type": {
           "response": {
-            "error": "none",
+            "error": "uint128",
             "ok": "int128"
           }
         }
@@ -35,12 +56,7 @@ export const CounterInterface: ClarityAbi = {
       "args": [],
       "name": "get-counter",
       "outputs": {
-        "type": {
-          "response": {
-            "error": "none",
-            "ok": "int128"
-          }
-        }
+        "type": "int128"
       }
     }
   ],
@@ -48,6 +64,11 @@ export const CounterInterface: ClarityAbi = {
   "maps": [],
   "non_fungible_tokens": [],
   "variables": [
+    {
+      "access": "constant",
+      "name": "decimals",
+      "type": "uint128"
+    },
     {
       "access": "variable",
       "name": "counter",

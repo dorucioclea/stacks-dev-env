@@ -3,6 +3,6 @@ import { ClarityTypes } from '../../shared/clarity/types';
 
 // prettier-ignore
 
-export interface FtTraitContract {
+export interface Sip10FtStandardContract {
 
 }
