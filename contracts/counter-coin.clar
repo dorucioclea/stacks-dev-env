@@ -1,4 +1,4 @@
-(impl-trait .ft-trait.sip-010-trait)
+(impl-trait .sip-10-ft-standard.sip-010-trait)
 
 (define-fungible-token counter-token)
 
