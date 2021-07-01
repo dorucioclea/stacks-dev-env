@@ -1,4 +1,6 @@
+import path from "path";
 import { getContractNameFromPath } from "../utils/contract-name-for-path";
+import { contractWithSubDirectory } from "../utils/contract-with-subdirectory";
 import { toCamelCase } from "../utils/to-camel-case";
 
 export function generateIndexFile({
@@ -9,7 +11,8 @@ export function generateIndexFile({
   address: string;
 }) {
   
-  const contractName = getContractNameFromPath(contractFile);
+  const contractName = getContractNameFromPath(contractFile).normalize();
+
   const contractTitle = toCamelCase(contractName, true);
   const varName = toCamelCase(contractName);
   const contractType = `${contractTitle}Contract`;
@@ -31,7 +34,7 @@ export const ${varName}Contract = (provider: BaseProvider) => {
 export const ${varName}Info: Contract<${contractType}> = {
   contract: ${varName}Contract,
   address: '${address}',
-  contractFile: '${contractFile}',
+  contractFile: '${contractWithSubDirectory(contractName)}',
 };
 `;
 
