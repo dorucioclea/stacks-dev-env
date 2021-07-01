@@ -1,20 +1,12 @@
 import { NativeClarityBinProvider, Client } from "@blockstack/clarity";
-import { getDefaultBinaryFilePath } from "@blockstack/clarity-native-bin";
-import { getTempFilePath } from "@blockstack/clarity/lib/utils/fsUtil";
 
 export async function deployContract(
   client: Client,
-  provider?: NativeClarityBinProvider
+  provider: NativeClarityBinProvider
 ) {
 
-  const binFile = getDefaultBinaryFilePath();
-  const dbFileName = getTempFilePath();
-    
-  const providerToUse = provider ||
-  (await NativeClarityBinProvider.create([], dbFileName, binFile));
-
   console.log('deploying ', client.name, client.filePath, provider.dbFilePath);
-  const receipt = await providerToUse.runCommand([
+  const receipt = await provider.runCommand([
     "launch",
     client.name,
     client.filePath,
