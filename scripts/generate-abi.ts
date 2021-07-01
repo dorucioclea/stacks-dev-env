@@ -1,7 +1,6 @@
 import { generateFilesForContract } from "../shared/abi/generate-for-contract";
-import { createClarityBin } from "../shared/adapter/create-clarity-bin";
 import { CONTRACTS, GENERATION_FOLDER } from "./contracts";
-import { DEPLOYER_ADDRESS } from "./private-testnet";
+import { DEPLOYER_ADDRESS } from "../private-testnet";
 import { NativeClarityBinProvider } from "@blockstack/clarity";
 import { createDefaultTestProvider } from '../shared/default-test-provider';
 import { contractWithSubDirectory } from "../shared/utils/contract-with-subdirectory";

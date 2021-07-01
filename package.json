@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
+    "testjest": "jest",
     "test:watch": "mocha --watch"
   },
   "repository": {
@@ -37,7 +38,9 @@
     "typescript": "^3.5.2",
     "dotenv": "^8.2.0",
     "dotenv-webpack": "6.0.2",
-    "dos2unix": "1.1.2"
+    "dos2unix": "1.1.2",
+    "jest": "^26.6.3",
+    "ts-jest": "^26.5.4"
   },
   "dependencies": {
     "@stacks/auth": "^1.2.3",

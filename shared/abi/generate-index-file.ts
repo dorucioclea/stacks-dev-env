@@ -1,6 +1,6 @@
 import path from "path";
+import { CONTRACT_EXTENSION, CONTRACT_FOLDER } from "../constants";
 import { getContractNameFromPath } from "../utils/contract-name-for-path";
-import { contractWithSubDirectory } from "../utils/contract-with-subdirectory";
 import { toCamelCase } from "../utils/to-camel-case";
 
 export function generateIndexFile({
@@ -39,4 +39,12 @@ export const ${varName}Info: Contract<${contractType}> = {
 `;
 
   return fileContents;
+}
+
+function contractWithSubDirectory(contractName: string) {
+  if (contractName.endsWith(CONTRACT_EXTENSION)) {
+    return `${CONTRACT_FOLDER}\\\\${contractName}`;
+  }
+
+  return `${CONTRACT_FOLDER}\\\\${contractName}.clar`;
 }
