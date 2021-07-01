@@ -89,29 +89,3 @@ export interface CreateOptions {
   export  interface UtilsContract {
     getBlockHeight: Promise<number>;
   }
-  
-  export type AppDetails = {
-    name: string;
-    icon: string;
-  };
-
-  export interface TxPayload {
-    contractAddress: string;
-    contractName: string;
-    functionName: string;
-    functionArgs: string[];
-    network: StacksNetwork;
-    privateKey: string;
-    stxAddress: string;
-    appDetails: AppDetails;
-  }
-  
-  export interface ContractCallPayload extends Omit<TxPayload, 'privateKey'> {
-    publicKey: string;
-    txType: 'contract_call';
-    postConditions?: string[];
-  }
-  
-  export interface WebTransaction<Ok, Err> extends Transaction<Ok, Err> {
-    payload: TxPayload;
-  }
