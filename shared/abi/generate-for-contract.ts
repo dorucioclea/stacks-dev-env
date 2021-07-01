@@ -16,19 +16,22 @@ export async function generateFilesForContract({
 }: {
   contractFile: string;
   outputFolder?: string;
-  provider?: NativeClarityBinProvider;
+  provider: NativeClarityBinProvider;
   contractAddress?: string;
   dirName?: string;
 }) {
   const contractFile = resolve(process.cwd(), _contractFile);
-
+  console.log('contract file ', contractFile);
   const contractName = getContractNameFromPath(contractFile);
 
+  console.log('contract name ', contractName);
   const abi = await generateInterface({
     contractFile,
     provider,
     contractAddress,
   });
+
+  console.log('abi ', abi);
 
   const typesFile = generateTypesFile(abi, contractName);
   if (!contractAddress && process.env.NODE_ENV !== "test") {

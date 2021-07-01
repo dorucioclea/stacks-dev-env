@@ -8,6 +8,7 @@ export function generateIndexFile({
   contractFile: string;
   address: string;
 }) {
+  
   const contractName = getContractNameFromPath(contractFile);
   const contractTitle = toCamelCase(contractName, true);
   const varName = toCamelCase(contractName);
