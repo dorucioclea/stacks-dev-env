@@ -1,6 +1,7 @@
 import { NativeClarityBinProvider } from '@blockstack/clarity';
+import { StacksNetwork } from '@stacks/network';
 import type { BaseProvider } from './providers/base-provider';
-import { ResultAssets } from './transaction';
+import { ResultAssets, Transaction } from './transaction';
 
 export type ContractBuilder<T> = (provider: BaseProvider) => T;
 export interface Contract<T> {
@@ -89,3 +90,28 @@ export interface CreateOptions {
     getBlockHeight: Promise<number>;
   }
   
+  export type AppDetails = {
+    name: string;
+    icon: string;
+  };
+
+  export interface TxPayload {
+    contractAddress: string;
+    contractName: string;
+    functionName: string;
+    functionArgs: string[];
+    network: StacksNetwork;
+    privateKey: string;
+    stxAddress: string;
+    appDetails: AppDetails;
+  }
+  
+  export interface ContractCallPayload extends Omit<TxPayload, 'privateKey'> {
+    publicKey: string;
+    txType: 'contract_call';
+    postConditions?: string[];
+  }
+  
+  export interface WebTransaction<Ok, Err> extends Transaction<Ok, Err> {
+    payload: TxPayload;
+  }
