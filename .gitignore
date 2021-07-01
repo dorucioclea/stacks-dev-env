@@ -104,3 +104,4 @@ dist
 .tern-port
 bns-data/*
 !bns-data/.gitkeep
+clarity-cli/clarity-cli.exe

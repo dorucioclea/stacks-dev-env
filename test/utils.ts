@@ -8,7 +8,7 @@ import {
   SignedContractCallOptions,
   SignedMultiSigContractCallOptions
 } from "@stacks/transactions";
-import { StacksTestnet, StacksMainnet } from "@stacks/network";
+import { StacksTestnet } from "@stacks/network";
 require('dotenv').config();
 
 import * as fs from "fs";
