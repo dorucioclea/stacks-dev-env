@@ -11,7 +11,6 @@ async function generateAbiFilesForContract(
   provider: NativeClarityBinProvider
 ) {
 
-  console.log('contract ', contract);
   await generateFilesForContract({
     contractFile: contractWithSubDirectory(contract),
     outputFolder: GENERATION_FOLDER,

@@ -9,11 +9,7 @@ export async function createClarityBin({
 }: { allocations?: AllocationOrAccounts } = {}) {
   const binFile = getDefaultBinaryFilePath();
 
-  console.log('binfile', binFile);
   const dbFileName = getTempFilePath();
-
-  console.log('dbfilename', dbFileName);
-  
   const _allocations = getAllocations(allocations);
   const provider = await NativeClarityBinProvider.create(
     _allocations,

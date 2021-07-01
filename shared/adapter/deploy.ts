@@ -15,11 +15,6 @@ export async function deploy({
     let contractName = getContractNameFromPath(contractFile);
 
     const contractIdentifier = `${contractAddress}.${contractName}`;
-
-    console.log('contract identifier: ', contractIdentifier);
-
     const client = new Client(contractIdentifier, contractFile, provider);
     await deployContract(client, provider);
-
-    console.log('deployed contract ', contractIdentifier);
   }

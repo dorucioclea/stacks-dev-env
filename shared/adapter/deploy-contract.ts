@@ -5,7 +5,6 @@ export async function deployContract(
   provider: NativeClarityBinProvider
 ) {
 
-  console.log('deploying ', client.name, client.filePath, provider.dbFilePath);
   const receipt = await provider.runCommand([
     "launch",
     client.name,
@@ -15,15 +14,10 @@ export async function deployContract(
     "--assets",
   ]);
   if (receipt.stderr) {
-
-    console.log('deployment error ', receipt.stderr);
-
     throw new Error(`Error on ${client.filePath}:
   ${receipt.stderr}
     `);
   }
-
-  console.log('deployment success: ', receipt.stdout);
 
   const output = JSON.parse(receipt.stdout);
   if (output.error) {

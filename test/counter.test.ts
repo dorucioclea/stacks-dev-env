@@ -1,14 +1,9 @@
 import { TestProvider } from "../shared/providers/test-provider";
 import { txErr, txOk } from "../shared/transaction";
-import { DEPLOYER_ADDRESS, testnetKeyMap } from "../private-testnet";
+import { DEPLOYER_ADDRESS } from "../private-testnet";
 
 import { CounterCoinContract, CounterContract, contracts } from '../src';
-
-console.log('start testing ', JSON.stringify(testnetKeyMap));
-
 const deployer = DEPLOYER_ADDRESS;
-
-console.log('alice ', JSON.stringify(testnetKeyMap[0]));
 
 const alice = /*testnetKeyMap[0].address ||*/ 'ST26FVX16539KKXZKJN098Q08HRX3XBAP541MFS0P';
 const bob = /*testnetKeyMap[1].address ||*/ 'ST3CECAKJ4BH08JYY7W53MC81BYDT4YDA5M7S5F53';
