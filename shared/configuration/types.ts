@@ -28,7 +28,7 @@ export interface ClarinetAccount extends ClarinetConfigAccount {
 
 export interface ClarinetAccounts {
   deployer: ClarinetAccount;
-  [name: string]: ClarinetAccount;
+  [name: string]: ClarinetAccount;  
 }
 
 export interface ConfigContract {
