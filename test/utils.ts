@@ -9,23 +9,19 @@ import {
   SignedMultiSigContractCallOptions
 } from "@stacks/transactions";
 import { StacksTestnet } from "@stacks/network";
-require('dotenv').config();
 
 import * as fs from "fs";
 const fetch = require("node-fetch");
 
-import { ADDR1, ADDR4, testnetKeyMap } from "./mocknet";
-
-
+import { ADDR1, testnetKeyMap } from "./testnet";
 const STACKS_CORE_API_URL = "http://localhost:3999";
 export const network = new StacksTestnet();
 network.coreApiUrl = STACKS_CORE_API_URL;
-
 const keys = testnetKeyMap[ADDR1];
 
 export const secretKey = keys.secretKey;
 export const contractAddress = keys.address;
-const deployKey = testnetKeyMap[ADDR4];
+const deployKey = testnetKeyMap[ADDR1];
 export const deployContractAddress = deployKey.address;
 export const secretDeployKey = deployKey.secretKey;
 
@@ -80,7 +76,9 @@ export async function deployContract(contractName: string, changeCode: (str: str
     codeBody: changeCode(codeBody),
     senderKey: secretDeployKey,
     network,
-    anchorMode: 3
+    anchorMode: 3,
+    // fee: new BN(1000),
+    // nonce: new BN(10)
   });
 
   console.log(`deploy contract ${contractName}`);

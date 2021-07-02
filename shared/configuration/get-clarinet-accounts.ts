@@ -6,14 +6,26 @@ export async function getClarinetAccounts(
     folder: string
   ): Promise<ClarinetAccounts> {
     const devConfig = await getClarinetDevConfig(folder);
+
     const accountEntries = await Promise.all(
       Object.entries(devConfig.accounts).map(async ([key, info]) => {
+
+        console.log('===================================================================================== ', key);
+        console.log(info.mnemonic);
         const wallet = await generateWallet({
           secretKey: info.mnemonic,
           password: 'password',
         });
+
+        console.log('generated wallet ',JSON.stringify(wallet));
+
         const [account] = wallet.accounts;
         const address = getStxAddress({ account });
+
+        console.log('ADDRESS ', address);
+
+        console.log('=====================================================================================');
+
         return [
           key,
           {
