@@ -2,7 +2,7 @@
 name = "clarinet"
 requirements = []
 
-[contracts.simpleCounter]
+[contracts.simple-counter]
 path = "contracts/simple-counter.clar"
 depends_on = []
 
@@ -10,10 +10,10 @@ depends_on = []
 path = "contracts/sip-10-ft-standard.clar"
 depends_on = []
 
-[contracts.counterCoin]
+[contracts.counter-coin]
 path = "contracts/counter-coin.clar"
 depends_on = ["sip-10-ft-standard"]
 
 [contracts.counter]
 path = "contracts/counter.clar"
-depends_on = ["counterCoin"]
+depends_on = ["counter-coin"]
