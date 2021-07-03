@@ -9,7 +9,7 @@ import {
 } from "@stacks/transactions";
 
 import { ok, err } from "neverthrow";
-import { BaseProvider } from "./base-provider";
+import { BaseProvider, IProviderRequest } from "./base-provider";
 import { Submitter, Transaction, TransactionResult } from "../transaction";
 import {
   ContractInstances,
@@ -94,11 +94,11 @@ export class TestProvider implements BaseProvider {
     return instances;
   }
 
-  async callReadOnly(func: ClarityAbiFunction, args: any[]) {
-    const argsFormatted = this.formatArguments(func, args);
+  async callReadOnly(request: IProviderRequest) {
+    const argsFormatted = this.formatArguments(request.function, request.arguments);
     const result = await evalJson({
       contractAddress: this.client.name,
-      functionName: func.name,
+      functionName: request.function.name,
       args: argsFormatted,
       provider: this.clarityBin,
     });
@@ -116,8 +116,8 @@ export class TestProvider implements BaseProvider {
     }
   }
 
-  callPublic(func: ClarityAbiFunction, args: any[]): Transaction<any, any> {
-    const argsFormatted = this.formatArguments(func, args);
+  callPublic(request: IProviderRequest): Transaction<any, any> {
+    const argsFormatted = this.formatArguments(request.function, request.arguments);
     const submit: Submitter<any, any> = async (options) => {
       if (!("sender" in options)) {
         throw new Error("Passing `sender` is required.");
@@ -126,7 +126,7 @@ export class TestProvider implements BaseProvider {
         provider: this.clarityBin,
         contractAddress: this.client.name,
         senderAddress: options.sender,
-        functionName: func.name,
+        functionName: request.function.name,
         args: argsFormatted,
       });
       const getResult = (): Promise<TransactionResult<any, any>> => {
