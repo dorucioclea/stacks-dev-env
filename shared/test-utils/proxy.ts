@@ -11,11 +11,17 @@ const makeHandler = (provider: BaseProvider) => {
       if (foundFunction) {
         if (foundFunction.access === "read_only") {
           return (...args: any[]) => {
-            return provider.callReadOnly(foundFunction, args);
+            return provider.callReadOnly({
+              arguments: args,
+              function: foundFunction
+            });
           };
         } else if (foundFunction.access === "public") {
           return (...args: any[]) => {
-            return provider.callPublic(foundFunction, args);
+            return provider.callPublic({
+              arguments: args,
+              function: foundFunction
+            });
           };
         }
       }
