@@ -1,17 +1,5 @@
 import { ResultAssets } from "../transaction";
 
-export interface ClarinetAccount {
-  balance: number;
-  address: string;
-}
-
-export interface ClarinetAccounts {
-  deployer: ClarinetAccount;
-  [key: string]: ClarinetAccount;
-}
-
-export type AllocationOrAccounts = ClarinetAccounts | Allocation[];
-
 export interface EvalOk {
   success: true;
   costs: {

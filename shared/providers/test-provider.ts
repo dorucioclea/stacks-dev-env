@@ -18,7 +18,7 @@ import {
   FromContractOptions,
 } from "../types";
 import { deployContract } from "../adapter/deploy-contract";
-import { ClarinetAccounts } from "../adapter/types";
+import { ClarinetAccounts } from "../configuration/types";
 import { getDefaultClarityBin } from "../adapter/get-default-clarity-bin";
 import { deployUtilContract } from "../test-utils/deploy-util-contract";
 import { getContractIdentifier } from "../utils/contract-identifier";
