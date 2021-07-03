@@ -1,4 +1,4 @@
-import { generateFilesForContract } from "../shared/abi/generate-for-contract";
+import { generateFilesForContract } from "../shared/abi";
 import { CONTRACTS, GENERATION_FOLDER } from "./contracts";
 import { DEPLOYER_ADDRESS } from "../private-testnet";
 import { NativeClarityBinProvider } from "@blockstack/clarity";
