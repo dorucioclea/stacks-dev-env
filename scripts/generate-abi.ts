@@ -1,6 +1,6 @@
 import { generateFilesForContract } from "../shared/abi";
 import { CONTRACTS, GENERATION_FOLDER } from "./contracts";
-import { DEPLOYER_ADDRESS } from "../private-testnet";
+import { ADDR1 } from "../test/testnet";
 import { NativeClarityBinProvider } from "@blockstack/clarity";
 import { createDefaultTestProvider } from '../shared/default-test-provider';
 import { contractWithSubDirectory } from "../shared/utils/contract-with-subdirectory";
@@ -48,8 +48,8 @@ export async function generateAbis(): Promise<void> {
   //   provider
   // });
 
-  await generateAbiFilesForContract("sip-10-ft-standard", DEPLOYER_ADDRESS, provider);
-  await generateAbiFilesForContract("simple-counter", DEPLOYER_ADDRESS, provider);
-  await generateAbiFilesForContract("counter-coin", DEPLOYER_ADDRESS, provider);
-  await generateAbiFilesForContract("counter", DEPLOYER_ADDRESS, provider);
+  await generateAbiFilesForContract("sip-10-ft-standard", ADDR1, provider);
+  await generateAbiFilesForContract("simple-counter", ADDR1, provider);
+  await generateAbiFilesForContract("counter-coin", ADDR1, provider);
+  await generateAbiFilesForContract("counter", ADDR1, provider);
 }

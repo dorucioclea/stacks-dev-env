@@ -1,11 +1,13 @@
 import { TestProvider } from "../shared/providers/test-provider";
 import { txErr, txOk } from "../shared/transaction";
-import { DEPLOYER_ADDRESS } from "../private-testnet";
 import { CounterCoinContract, CounterContract, contracts } from '../src';
 import { NO_METADATA } from "../shared/providers/types";
-const deployer = DEPLOYER_ADDRESS;
-const alice = /*testnetKeyMap[0].address ||*/ 'ST1HJ4TYWQV3MCSP2T751GDN39PTENCX72HPQYDCM';
-const bob = /*testnetKeyMap[1].address ||*/ 'STRVCQ501XZVWWWBWQTC3BCWKYG8WWER1BSCD9S8';
+import { ADDR1, ADDR2, testnetKeyMap } from "./testnet";
+
+const keys = testnetKeyMap[ADDR1];
+const deployer = keys.address;
+const alice = ADDR1;
+const bob   =  ADDR2;
 let counter: CounterContract;
 let token: CounterCoinContract;
 
