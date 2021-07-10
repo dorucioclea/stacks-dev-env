@@ -1,11 +1,11 @@
-import { getClarinetDevConfig } from "./get-clarinet-dev-config";
+import { getClarinetTestnetConfig } from "./get-clarinet-dev-config";
 import { generateWallet, getStxAddress } from '@stacks/wallet-sdk';
 import { ClarinetAccounts } from './types'
 
 export async function getClarinetAccounts(
     folder: string
   ): Promise<ClarinetAccounts> {
-    const devConfig = await getClarinetDevConfig(folder);
+    const devConfig = await getClarinetTestnetConfig(folder);
 
     const accountEntries = await Promise.all(
       Object.entries(devConfig.accounts).map(async ([key, info]) => {

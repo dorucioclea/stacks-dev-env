@@ -1,6 +1,6 @@
 import { getClarinetAccounts } from '../shared/configuration/get-clarinet-accounts';
 
-test("Clarinet", async () =>{
+test("clarinet", async () =>{
 
     const cwd = process.cwd();
 

@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "testjest": "jest",
-    "test:watch": "mocha --watch"
+    "test:watch": "mocha --watch",
+    "unit-test": "jest counter.test.ts",
+    "clarinet-test": "jest clarinet.test.ts"
   },
   "repository": {
     "type": "git",
