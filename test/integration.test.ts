@@ -5,7 +5,6 @@ import { StacksNetwork } from "@stacks/network";
 import { StacksNetworkConfiguration } from "./stacks-network";
 
 const keys = testnetKeyMap[ADDR1];
-const privateKey = keys.secretKey;
 // const alice = ADDR1;
 // const bob   =  ADDR2;
 let counter: CounterContract;
@@ -25,7 +24,7 @@ beforeAll(async () => {
 
 test("Starts at zero", async () => {
   const current = await counter.getCounter({
-      callerPrivateKey: keys.address,
+      sender: keys.address,
       discriminator: 'metadata'
   });
 

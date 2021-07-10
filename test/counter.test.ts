@@ -43,7 +43,7 @@ test('can decrement', async () => {
 
 test('alice can transfer', async () => {
   const result = await txOk(token.transfer(100, alice, bob, null, NO_METADATA), alice);
-  expect(result.assets.tokens[alice][`${deployer}.counter-coin::counter-token`]).toEqual('100')
+  expect(result.assets?.tokens[alice][`${deployer}.counter-coin::counter-token`]).toEqual('100')
 });
 
 test('transfer with memo', async () => {
