@@ -1,7 +1,6 @@
-import { NativeClarityBinProvider } from '@blockstack/clarity';
-import { StacksNetwork } from '@stacks/network';
-import type { BaseProvider } from './providers/base-provider';
-import { ResultAssets, Transaction } from './transaction';
+import { NativeClarityBinProvider } from "@blockstack/clarity";
+import type { BaseProvider } from "./providers/base-provider";
+import { ResultAssets } from "./transaction";
 
 export type ContractBuilder<T> = (provider: BaseProvider) => T;
 export interface Contract<T> {
@@ -20,72 +19,79 @@ export interface ContractInstance<T> {
 }
 
 export type ContractInstances<T extends Contracts<M>, M> = {
-  [Name in keyof T]: ContractInstance<ReturnType<T[Name]['contract']>>;
+  [Name in keyof T]: ContractInstance<ReturnType<T[Name]["contract"]>>;
 };
 
-
 export interface EvalOk {
-    success: true;
-    costs: {
-      [key: string]: any;
-      runtime: number;
-    };
-    output_serialized: string;
-  }
-  
-  export interface EvalErr {
-    success: false;
-    error: string;
-  }
-  
-  export type EvalResult = EvalOk | EvalErr;
+  success: true;
+  costs: {
+    [key: string]: any;
+    runtime: number;
+  };
+  output_serialized: string;
+}
 
-  
+export interface EvalErr {
+  success: false;
+  error: string;
+}
+
+export type EvalResult = EvalOk | EvalErr;
+
 export interface Allocation {
-    principal: string;
-    amount: number;
-  }
+  principal: string;
+  amount: number;
+}
+
+export interface ExecuteOk {
+  success: true;
+  message: string;
+  events: any[];
+  output_serialized: string;
+  costs: {
+    [key: string]: any;
+    runtime: number;
+  };
+  assets: ResultAssets;
+  // todo: logs
+}
+
+export interface ExecuteErr {
+  message: string;
+  error: any;
+  output_serialized: string;
+  costs: {
+    [key: string]: any;
+    runtime: number;
+  };
+  assets: ResultAssets;
+  success: false;
+}
+
+export type ExecuteResult = ExecuteOk | ExecuteErr;
+
+export interface BaseCreateOptions{
+  allocations?: Allocation[];
+  contractIdentifier: string;
+  contractFilePath: string;
+}
+
+export interface ApiCreateOptions extends BaseCreateOptions {
   
-  export interface ExecuteOk {
-    success: true;
-    message: string;
-    events: any[];
-    output_serialized: string;
-    costs: {
-      [key: string]: any;
-      runtime: number;
-    };
-    assets: ResultAssets;
-    // todo: logs
-  }
-  
-  export interface ExecuteErr {
-    message: string;
-    error: any;
-    output_serialized: string;
-    costs: {
-      [key: string]: any;
-      runtime: number;
-    };
-    assets: ResultAssets;
-    success: false;
-  }
-  
-  export type ExecuteResult = ExecuteOk | ExecuteErr;
-  
-  
-export interface CreateOptions {
-    allocations?: Allocation[];
-    contractIdentifier: string;
-    contractFilePath: string;
-    clarityBin: NativeClarityBinProvider;
-  }
-  
-  export interface FromContractOptions<T> {
-    contract: Contract<T>;
-    clarityBin: NativeClarityBinProvider;
-  }
-  
-  export  interface UtilsContract {
-    getBlockHeight: Promise<number>;
-  }
+}
+
+export interface CreateOptions extends BaseCreateOptions {
+  clarityBin: NativeClarityBinProvider;
+}
+
+export interface FromApiContractOptions<T> {
+  contract: Contract<T>;
+}
+
+export interface FromContractOptions<T> extends FromApiContractOptions<T> {
+  clarityBin: NativeClarityBinProvider;
+}
+
+export interface UtilsContract {
+  getBlockHeight: Promise<number>;
+}
