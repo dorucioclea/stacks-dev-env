@@ -1,10 +1,8 @@
 import { Logger } from '../shared/logger/logger';
 import { getClarinetAccounts } from '../shared/configuration/get-clarinet-accounts';
 
-test("clarinet", async () =>{
-
+test("Clarinet configuration sanity check", async () =>{
     const cwd = process.cwd();
-
     var contracts = await getClarinetAccounts(cwd);
 
     for(var contract in contracts) {
