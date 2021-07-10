@@ -1,5 +1,6 @@
 import { ClarityAbi } from "../clarity/types";
 import { BaseProvider } from "../providers/base-provider";
+import { IMetadata } from "../providers/types";
 import { toCamelCase } from "../utils/to-camel-case";
 
 const makeHandler = (provider: BaseProvider) => {
@@ -13,14 +14,16 @@ const makeHandler = (provider: BaseProvider) => {
           return (...args: any[]) => {
             return provider.callReadOnly({
               arguments: args,
-              function: foundFunction
+              function: foundFunction,
+              metadata: null
             });
           };
         } else if (foundFunction.access === "public") {
           return (...args: any[]) => {
             return provider.callPublic({
               arguments: args,
-              function: foundFunction
+              function: foundFunction,
+              metadata: null
             });
           };
         }
