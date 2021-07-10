@@ -1,7 +1,3 @@
-import { NativeClarityBinProvider } from "@blockstack/clarity";
-import { getTempFilePath } from "@blockstack/clarity/lib/utils/fsUtil";
-import { getDefaultBinaryFilePath } from "@blockstack/clarity-native-bin";
-
 import { ClarityAbi } from "../clarity/types";
 import { getContractNameFromPath } from "../utils/contract-name-for-path";
 import { toCamelCase } from '../utils/to-camel-case';

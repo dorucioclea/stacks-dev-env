@@ -8,7 +8,8 @@
     "test:watch": "mocha --watch",
     "unit-test": "jest counter.test.ts",
     "clarinet-test": "jest clarinet.test.ts",
-    "integration-test": "jest integration.test.ts"
+    "integration-test": "jest integration.test.ts",
+    "generate": "ts-node scripts/abi.ts"
   },
   "repository": {
     "type": "git",
