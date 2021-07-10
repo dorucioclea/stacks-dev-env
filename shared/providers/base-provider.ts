@@ -1,11 +1,9 @@
 import { ClarityAbiFunction } from "@stacks/transactions";
 import { Transaction } from "../transaction";
-import { IMetadata } from './types';
 
 export interface IProviderRequest {
   function: ClarityAbiFunction;
   arguments: any[];
-  metadata: IMetadata | null;
 }
 
 export abstract class BaseProvider {

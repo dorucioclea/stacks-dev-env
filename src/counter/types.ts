@@ -6,7 +6,7 @@ import { IMetadata } from '../../shared/providers/types';
 
 export interface CounterContract {
 
-  decrement: (metadata?: IMetadata) => Transaction<number, number>;
-  increment: (metadata?: IMetadata) => Transaction<number, number>;
-  getCounter: (metadata?: IMetadata) => Promise<number>;
+  decrement: (metadata: IMetadata) => Transaction<number, number>;
+  increment: (metadata: IMetadata) => Transaction<number, number>;
+  getCounter: (metadata: IMetadata) => Promise<number>;
 }

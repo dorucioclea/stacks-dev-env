@@ -103,7 +103,7 @@ export const makeTypes = (abi: ClarityAbi) => {
   let typings = "";
   abi.functions.forEach((func, index) => {
     if (func.access === "private") return;
-    const metadata = `metadata?: IMetadata`;
+    const metadata = `metadata: IMetadata`;
     let functionLine = `${toCamelCase(func.name)}: `;
     const args = func.args.map((arg) => {
       return `${toCamelCase(arg.name)}: ${jsTypeFromAbiType(arg.type)}`;

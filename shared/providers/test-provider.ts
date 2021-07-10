@@ -27,6 +27,7 @@ import { evalJson } from "../adapter/eval-json";
 import { executeJson } from "../adapter/execute-json";
 import { parseToCV } from '../clarity/parse-to-cv'
 import { cvToValue } from '../clarity/cv-to-value'
+import { instanceOfMetadata } from './types';
 
 export class TestProvider implements BaseProvider {
   clarityBin: NativeClarityBinProvider;
@@ -162,7 +163,24 @@ export class TestProvider implements BaseProvider {
   }
 
   formatArguments(func: ClarityAbiFunction, args: any[]): string[] {
-    return args.map((arg, index) => {
+
+
+    // console.log(JSON.stringify(args));
+    // console.log(JSON.stringify(args.filter(arg => arg != null && arg != undefined)));
+
+    var metadata = args.filter(arg => instanceOfMetadata(arg));
+    if (metadata.length > 1) {
+      throw new TypeError("More than one metadata objects");
+    }
+
+    var argsWithoutMetadata = metadata.length == 1 ? 
+        args.filter(x => x !== metadata[0])
+        : args;
+
+    console.log("argswithoutmetadata --> " +  JSON.stringify(argsWithoutMetadata));
+  
+
+    var formatted =  argsWithoutMetadata.map((arg, index) => {
       const { type } = func.args[index];
       if (type === "trait_reference") {
         return `'${arg}`;
@@ -174,5 +192,8 @@ export class TestProvider implements BaseProvider {
       }
       return cvString;
     });
+
+
+    return formatted;
   }
 }

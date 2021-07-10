@@ -14,6 +14,8 @@ export const executeJson = async ({
     functionName: string;
     args?: string[];
   }) => {
+
+    console.log('executing with arguments: '+ JSON.stringify(args));
     const result = await provider.runCommand([
       'execute',
       '--costs',
