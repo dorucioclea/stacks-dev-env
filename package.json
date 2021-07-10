@@ -7,7 +7,8 @@
     "test": "mocha",
     "test:watch": "mocha --watch",
     "unit-test": "jest counter.test.ts",
-    "clarinet-test": "jest clarinet.test.ts"
+    "clarinet-test": "jest clarinet.test.ts",
+    "integration-test": "jest integration.test.ts"
   },
   "repository": {
     "type": "git",
