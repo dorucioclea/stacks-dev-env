@@ -21,6 +21,7 @@ test('Starts at zero', async () => {
 });
 
 test('can increment', async () => {
+  
   await txOk(counter.increment(NO_METADATA), alice);
   expect(await counter.getCounter(NO_METADATA)).toEqual(1);
 });
