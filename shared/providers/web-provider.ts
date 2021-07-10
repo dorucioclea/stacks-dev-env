@@ -1,11 +1,20 @@
 import {
   broadcastTransaction,
+  ClarityAbiFunction,
+  cvToString,
+  cvToValue,
+  deserializeCV,
+  makeContractCall,
   makeContractDeploy,
+  responseErrorCV,
+  responseOkCV,
+  SignedContractCallOptions,
+  SignedMultiSigContractCallOptions,
   StacksTransaction,
   TxBroadcastResultOk,
   TxBroadcastResultRejected,
 } from "@stacks/transactions";
-import { Transaction } from "../transaction";
+import { Submitter, Transaction, TransactionResult } from "../transaction";
 import { BaseProvider, IProviderRequest } from "./base-provider";
 import {
   Contracts,
@@ -13,29 +22,110 @@ import {
   FromApiContractOptions,
   ApiCreateOptions,
 } from "../types";
-import { unchanged } from "./types";
+import {
+  DeployerAccount,
+  IMetadata,
+  instanceOfMetadata,
+  unchanged,
+} from "./types";
 import * as fs from "fs";
 import { getContractIdentifier } from "../utils/contract-identifier";
 import { getContractNameFromPath } from "../utils/contract-name-for-path";
 import { StacksNetwork } from "@stacks/network";
+import { Logger } from "../logger/logger";
+import { parseToCV } from "../clarity/parse-to-cv";
+
+type GetResultType = () => Promise<TransactionResult<any, any>>;
 
 export class WebProvider implements BaseProvider {
   private readonly network: StacksNetwork;
+  private readonly deployerAccount: DeployerAccount;
+  private readonly contractName: string;
 
-  constructor(network: StacksNetwork) {
+  constructor(
+    network: StacksNetwork,
+    deployerAccount: DeployerAccount,
+    contractName: string
+  ) {
     this.network = network;
+    this.deployerAccount = deployerAccount;
+    this.contractName = contractName;
   }
-  
-  callReadOnly(_request: IProviderRequest): Promise<void> {
-    throw new Error("Method not implemented.");
+
+  async callReadOnly(request: IProviderRequest): Promise<void> {
+    let formattedArguments: [string[], IMetadata] = this.formatArguments(
+      request.function,
+      request.arguments
+    );
+    await this.callContractFunction(
+      this.contractName,
+      request.function.name,
+      arguments[1].sender,
+      formattedArguments[0]
+    );
   }
 
   callPublic(request: IProviderRequest): Transaction<any, any> {
-    throw new Error("Method not implemented.");
+    let formattedArguments: [string[], IMetadata] = this.formatArguments(
+      request.function,
+      request.arguments
+    );
+    var metadata = formattedArguments[1];
+    var args = formattedArguments[0];
+    const submit: Submitter<any, any> = async (_options) => {
+      if (metadata.sender == null) {
+        throw new Error("Passing `sender` is required.");
+      }
+
+      let getResult: GetResultType;
+
+      try {
+        var rawTransactionResult = await this.callContractFunction(
+          this.contractName,
+          request.function.name,
+          metadata.sender,
+          args
+        );
+
+        getResult = (): Promise<TransactionResult<any, any>> => {
+          const resultCV = deserializeCV(
+            Buffer.from(rawTransactionResult, "hex")
+          );
+          const result = cvToValue(resultCV);
+
+          return Promise.resolve({
+            isOk: true,
+            response: responseOkCV(resultCV),
+            value: result,
+          });
+        };
+      } catch (error) {
+        getResult = (): Promise<TransactionResult<any, any>> => {
+          const resultCV = deserializeCV(
+            Buffer.from(rawTransactionResult, "hex")
+          );
+          const result = cvToValue(resultCV);
+
+          return Promise.resolve({
+            isOk: false,
+            response: responseErrorCV(resultCV),
+            value: result,
+          });
+        };
+      }
+      return {
+        getResult,
+      };
+    };
+    return {
+      submit,
+    };
   }
 
   public static async fromContracts<T extends Contracts<M>, M>(
-    contracts: T, network: StacksNetwork, secretDeployKey: string
+    contracts: T,
+    network: StacksNetwork,
+    account: DeployerAccount
   ): Promise<ContractInstances<T, M>> {
     const instances = {} as ContractInstances<T, M>;
     // await deployUtilContract(clarityBin);
@@ -44,7 +134,7 @@ export class WebProvider implements BaseProvider {
       const instance = await this.fromContract({
         contract,
         network,
-        secretDeployKey
+        account,
       });
       instances[k] = {
         identifier: getContractIdentifier(contract),
@@ -54,7 +144,11 @@ export class WebProvider implements BaseProvider {
     return instances;
   }
 
-  static async fromContract<T>({ contract, network, secretDeployKey }: FromApiContractOptions<T>) {
+  static async fromContract<T>({
+    contract,
+    network,
+    account,
+  }: FromApiContractOptions<T>) {
     const { address } = contract;
     if (!address) {
       throw new Error("TestProvider must have an address");
@@ -65,7 +159,7 @@ export class WebProvider implements BaseProvider {
       contractFilePath: contract.contractFile,
       contractIdentifier: contractName,
       network,
-      secretDeployKey
+      account,
     });
     return contract.contract(provider);
   }
@@ -74,10 +168,15 @@ export class WebProvider implements BaseProvider {
     contractFilePath,
     contractIdentifier,
     network,
-    secretDeployKey
+    account,
   }: ApiCreateOptions) {
-    await this.deployContract(contractIdentifier, contractFilePath, network, secretDeployKey);
-    return new this(network);
+    await this.deployContract(
+      contractIdentifier,
+      contractFilePath,
+      network,
+      account.secretKey
+    );
+    return new this(network, account, contractIdentifier);
   }
 
   static async deployContract(
@@ -100,7 +199,10 @@ export class WebProvider implements BaseProvider {
     return this.handleTransaction(transaction, network);
   }
 
-  static async handleTransaction(transaction: StacksTransaction, network: StacksNetwork) {
+  static async handleTransaction(
+    transaction: StacksTransaction,
+    network: StacksNetwork
+  ): Promise<TxBroadcastResultOk> {
     const result = await broadcastTransaction(transaction, network);
     console.log(result);
     if ((result as TxBroadcastResultRejected).error) {
@@ -117,7 +219,10 @@ export class WebProvider implements BaseProvider {
         );
       }
     }
-    const processed = await this.processing(network, result as TxBroadcastResultOk);
+    const processed = await this.processing(
+      network,
+      result as TxBroadcastResultOk
+    );
     if (!processed) {
       throw new Error(
         `failed to process transaction ${transaction.txid}: transaction not found`
@@ -131,11 +236,19 @@ export class WebProvider implements BaseProvider {
     await new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  static async processing(network: StacksNetwork, tx: String, count: number = 0): Promise<boolean> {
+  static async processing(
+    network: StacksNetwork,
+    tx: String,
+    count: number = 0
+  ): Promise<boolean> {
     return this.processingWithSidecar(tx, count, network);
   }
 
-  static async processingWithSidecar(tx: String, count: number = 0, network: StacksNetwork): Promise<boolean> {
+  static async processingWithSidecar(
+    tx: String,
+    count: number = 0,
+    network: StacksNetwork
+  ): Promise<boolean> {
     const url = `${network.coreApiUrl}/extended/v1/tx/${tx}`;
     var result = await fetch(url);
     var value = await result.json();
@@ -157,11 +270,74 @@ export class WebProvider implements BaseProvider {
       return false;
     }
 
-    await this.timeout(3000); 
+    await this.timeout(3000);
     return this.processing(network, tx, count + 1);
   }
 
   static async timeout(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  async callContractFunction(
+    contractName: string,
+    functionName: string,
+    sender: any,
+    args: any
+  ) {
+    const txOptions:
+      | SignedContractCallOptions
+      | SignedMultiSigContractCallOptions = {
+      contractAddress: this.deployerAccount.stacksAddress,
+      contractName: contractName,
+      functionName: functionName,
+      functionArgs: args,
+      senderKey: sender,
+      network: this.network,
+      postConditionMode: 0x01, // PostconditionMode.Allow
+      anchorMode: 3,
+    };
+
+    Logger.debug(`Contract function call on ${contractName}::${functionName}`);
+    const transaction = await makeContractCall(txOptions);
+    console.log(transaction);
+
+    return WebProvider.handleTransaction(transaction, this.network);
+  }
+
+  formatArguments(
+    func: ClarityAbiFunction,
+    args: any[]
+  ): [string[], IMetadata] {
+    // console.log(JSON.stringify(args));
+    // console.log(JSON.stringify(args.filter(arg => arg != null && arg != undefined)));
+
+    var metadata = args.filter((arg) => instanceOfMetadata(arg));
+    if (metadata.length > 1) {
+      throw new TypeError("More than one metadata objects");
+    }
+
+    var metadataConfig = metadata[0];
+
+    var argsWithoutMetadata =
+      metadata.length == 1 ? args.filter((x) => x !== metadataConfig) : args;
+
+    console.log(
+      "argswithoutmetadata --> " + JSON.stringify(argsWithoutMetadata)
+    );
+
+    var formatted = argsWithoutMetadata.map((arg, index) => {
+      const { type } = func.args[index];
+      if (type === "trait_reference") {
+        return `'${arg}`;
+      }
+      const argCV = parseToCV(arg, type);
+      const cvString = cvToString(argCV);
+      if (type === "principal") {
+        return `'${cvString}`;
+      }
+      return cvString;
+    });
+
+    return [formatted, metadataConfig];
   }
 }

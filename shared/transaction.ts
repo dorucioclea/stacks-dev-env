@@ -11,19 +11,19 @@ export interface TransactionResultOk<Ok> {
   value: Ok;
   response: ResponseOk<Ok>;
   isOk: true;
-  events: any[];
-  costs: {
+  events?: any[];
+  costs?: {
     [key: string]: any;
     runtime: number;
   };
-  assets: ResultAssets;
+  assets?: ResultAssets;
   // TODO: add events
 }
 
 export interface TransactionResultErr<Err> {
   value: Err;
   response: ResponseErr<Err>;
-  costs: {
+  costs?: {
     [key: string]: any;
     runtime: number;
   };

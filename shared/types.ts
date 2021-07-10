@@ -1,6 +1,7 @@
 import { NativeClarityBinProvider } from "@blockstack/clarity";
 import { StacksNetwork } from "@stacks/network";
 import type { BaseProvider } from "./providers/base-provider";
+import { DeployerAccount } from "./providers/types";
 import { ResultAssets } from "./transaction";
 
 export type ContractBuilder<T> = (provider: BaseProvider) => T;
@@ -79,7 +80,7 @@ export interface BaseCreateOptions{
 
 export interface ApiCreateOptions extends BaseCreateOptions {
   network: StacksNetwork;
-  secretDeployKey: string;
+  account: DeployerAccount;
 }
 
 export interface CreateOptions extends BaseCreateOptions {
@@ -89,7 +90,7 @@ export interface CreateOptions extends BaseCreateOptions {
 export interface FromApiContractOptions<T> {
   contract: Contract<T>;
   network: StacksNetwork;
-  secretDeployKey: string;
+  account: DeployerAccount;
 }
 
 export interface FromContractOptions<T> {

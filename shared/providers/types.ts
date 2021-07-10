@@ -4,15 +4,15 @@ export function unchanged(codeBody: string) {
 
 export interface IMetadata {
   discriminator: 'metadata';
-  callerPrivateKey: string;
+  sender: string;
 }
 
 export class Metadata implements IMetadata {
   discriminator: "metadata";
-  callerPrivateKey: string;
+  sender: string;
 
-  public constructor(privateKey: string) {
-    this.callerPrivateKey = privateKey;
+  public constructor(sender: string) {
+    this.sender = sender;
     this.discriminator = 'metadata'
   }
 }
@@ -26,4 +26,9 @@ export function instanceOfMetadata(object: any): object is IMetadata {
 export interface IFunctionParameteers {
   args: string[];
   metadata: IMetadata;
+}
+
+export interface DeployerAccount {
+  secretKey: string; 
+  stacksAddress: string
 }
