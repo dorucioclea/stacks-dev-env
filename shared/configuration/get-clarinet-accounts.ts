@@ -1,6 +1,7 @@
 import { getClarinetTestnetConfig } from "./get-clarinet-dev-config";
 import { generateWallet, getStxAddress } from '@stacks/wallet-sdk';
 import { ClarinetAccounts } from './types'
+import { Logger } from '../logger/logger'
 
 export async function getClarinetAccounts(
     folder: string
@@ -10,21 +11,20 @@ export async function getClarinetAccounts(
     const accountEntries = await Promise.all(
       Object.entries(devConfig.accounts).map(async ([key, info]) => {
 
-        console.log('===================================================================================== ', key);
-        console.log(info.mnemonic);
+        Logger.debug(`Iteration key ${key}`);
+        Logger.debug(`Mnemonic: ${info.mnemonic}`);
+
         const wallet = await generateWallet({
           secretKey: info.mnemonic,
           password: 'password',
         });
 
-        console.log('generated wallet ',JSON.stringify(wallet));
+        Logger.debug(`generated wallet: ${JSON.stringify(wallet)}`);
 
         const [account] = wallet.accounts;
         const address = getStxAddress({ account });
 
-        console.log('ADDRESS ', address);
-
-        console.log('=====================================================================================');
+        Logger.debug(`Address: ${address}`);
 
         return [
           key,

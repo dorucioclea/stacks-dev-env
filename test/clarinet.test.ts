@@ -1,3 +1,4 @@
+import { Logger } from '../shared/logger/logger';
 import { getClarinetAccounts } from '../shared/configuration/get-clarinet-accounts';
 
 test("clarinet", async () =>{
@@ -7,6 +8,6 @@ test("clarinet", async () =>{
     var contracts = await getClarinetAccounts(cwd);
 
     for(var contract in contracts) {
-        console.log('contract: ', JSON.stringify(contract));
+        Logger.debug(`Contract: ${contract}`);
     } 
 });
