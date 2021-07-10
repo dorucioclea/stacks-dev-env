@@ -4,8 +4,6 @@
   "description": "Stacks local dev environment with minimal test project",
   "main": "index.js",
   "scripts": {
-    "test": "mocha",
-    "test:watch": "mocha --watch",
     "unit-test": "jest counter.test.ts",
     "clarinet-test": "jest clarinet.test.ts",
     "integration-test": "jest integration.test.ts",
@@ -34,7 +32,6 @@
     "@stacks/wallet-sdk": "^1.0.0-wallet-sdk.4",
     "@types/chai": "^4.2.17",
     "@types/dos2unix": "1.1.0",
-    "@types/mocha": "^5.2.7",
     "@types/node": "15.12.5",
     "@types/node-fetch": "2.5.10",
     "@types/webpack-env": "^1.16.0",
@@ -67,20 +64,7 @@
     "bitcoinjs-lib": "^5.2.0",
     "blockstack": "^19.2.2",
     "bn.js": "^4.12.0",
-    "mocha": "^8.3.1",
     "neverthrow": "4.2.1",
     "node-fetch": "2.6.1"
-  },
-  "mocha": {
-    "require": [
-      "ts-node/register/transpile-only",
-      "source-map-support/register"
-    ],
-    "extension": [
-      "ts",
-      "clar"
-    ],
-    "timeout": 0,
-    "recursive": true
   }
 }
