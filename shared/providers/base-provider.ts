@@ -11,7 +11,7 @@ export abstract class BaseProvider {
   async callReadOnly(_request: IProviderRequest) {
     throw new Error("Not implemented");
   }
-  
+
   callPublic(_request: IProviderRequest): Transaction<any, any> {
     throw new Error("Not implemented");
   }

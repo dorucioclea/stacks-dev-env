@@ -3,7 +3,7 @@ export function unchanged(codeBody: string) {
 }
 
 export interface IMetadata {
-  discriminator: 'metadata';
+  discriminator: "metadata";
   sender: string;
 }
 
@@ -13,14 +13,14 @@ export class Metadata implements IMetadata {
 
   public constructor(sender: string) {
     this.sender = sender;
-    this.discriminator = 'metadata'
+    this.discriminator = "metadata";
   }
 }
 
-export const NO_METADATA: IMetadata = new Metadata('');
+export const NO_METADATA: IMetadata = new Metadata("");
 
 export function instanceOfMetadata(object: any): object is IMetadata {
-  return object != null && object.discriminator === 'metadata';
+  return object != null && object.discriminator === "metadata";
 }
 
 export interface IFunctionParameteers {
@@ -29,6 +29,6 @@ export interface IFunctionParameteers {
 }
 
 export interface DeployerAccount {
-  secretKey: string; 
-  stacksAddress: string
+  secretKey: string;
+  stacksAddress: string;
 }

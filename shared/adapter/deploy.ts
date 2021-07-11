@@ -6,15 +6,17 @@ import { getContractNameFromPath } from "../utils/contract-name-for-path";
 import { deployContract } from "./deploy-contract";
 
 export async function deploy({
-    provider, contractFile, contractAddress = 'S1G2081040G2081040G2081040G208105NK8PE5',
+  provider,
+  contractFile,
+  contractAddress = "S1G2081040G2081040G2081040G208105NK8PE5",
 }: {
-    contractFile: string;
-    contractAddress?: string;
-    provider: NativeClarityBinProvider;
+  contractFile: string;
+  contractAddress?: string;
+  provider: NativeClarityBinProvider;
 }) {
-    let contractName = getContractNameFromPath(contractFile);
+  let contractName = getContractNameFromPath(contractFile);
 
-    const contractIdentifier = `${contractAddress}.${contractName}`;
-    const client = new Client(contractIdentifier, contractFile, provider);
-    await deployContract(client, provider);
-  }
+  const contractIdentifier = `${contractAddress}.${contractName}`;
+  const client = new Client(contractIdentifier, contractFile, provider);
+  await deployContract(client, provider);
+}

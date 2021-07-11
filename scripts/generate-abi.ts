@@ -2,7 +2,7 @@ import { generateFilesForContract } from "../shared/abi";
 import { CONTRACTS, GENERATION_FOLDER } from "./contracts";
 import { ADDR1 } from "../configuration";
 import { NativeClarityBinProvider } from "@blockstack/clarity";
-import { createDefaultTestProvider } from '../shared/default-test-provider';
+import { createDefaultTestProvider } from "../shared/default-test-provider";
 import { contractWithSubDirectory } from "../shared/utils/contract-with-subdirectory";
 
 async function generateAbiFilesForContract(
@@ -10,17 +10,15 @@ async function generateAbiFilesForContract(
   address: string,
   provider: NativeClarityBinProvider
 ) {
-
   await generateFilesForContract({
     contractFile: contractWithSubDirectory(contract),
     outputFolder: GENERATION_FOLDER,
     contractAddress: address,
-    provider
+    provider,
   });
 }
 
 export async function generateAbis(): Promise<void> {
-
   const provider = await createDefaultTestProvider();
 
   // await deploy({
@@ -40,7 +38,6 @@ export async function generateAbis(): Promise<void> {
   //   contractAddress: DEPLOYER_ADDRESS,
   //   provider
   // });
-
 
   // await deploy({
   //   contractFile: contractWithSubDirectory('counter'),

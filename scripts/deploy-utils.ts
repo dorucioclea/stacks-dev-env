@@ -15,7 +15,7 @@ const fetch = require("node-fetch");
 import { ADDR1, testnetKeyMap } from "../configuration/testnet";
 import { Contracts } from "../shared/types";
 import { getContractNameFromPath } from "../shared/utils/contract-name-for-path";
-import { getTransactionUrl, NETWORK } from '../configuration'
+import { getTransactionUrl, NETWORK } from "../configuration";
 
 const keys = testnetKeyMap[ADDR1];
 
@@ -32,12 +32,12 @@ export const secretDeployKey = deployKey.secretKey;
 export async function handleTransaction(transaction: StacksTransaction) {
   const result = await broadcastTransaction(transaction, NETWORK);
   Logger.debug(`Broadcast transaction result: ${JSON.stringify(result)}`);
-  
+
   if ((result as TxBroadcastResultRejected).error) {
     if (
       (result as TxBroadcastResultRejected).reason === "ContractAlreadyExists"
     ) {
-        Logger.debug("already deployed");
+      Logger.debug("already deployed");
       return "" as TxBroadcastResultOk;
     } else {
       throw new Error(

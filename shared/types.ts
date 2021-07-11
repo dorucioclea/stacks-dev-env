@@ -72,7 +72,7 @@ export interface ExecuteErr {
 
 export type ExecuteResult = ExecuteOk | ExecuteErr;
 
-export interface BaseCreateOptions{
+export interface BaseCreateOptions {
   allocations?: Allocation[];
   contractIdentifier: string;
   contractFilePath: string;

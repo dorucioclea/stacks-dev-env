@@ -18,11 +18,7 @@ import {
   FromApiContractOptions,
   ApiCreateOptions,
 } from "../types";
-import {
-  DeployerAccount,
-  IMetadata,
-  instanceOfMetadata,
-} from "./types";
+import { DeployerAccount, IMetadata, instanceOfMetadata } from "./types";
 import * as fs from "fs";
 import { getContractIdentifier } from "../utils/contract-identifier";
 import { getContractNameFromPath } from "../utils/contract-name-for-path";
@@ -117,7 +113,7 @@ export class ApiProvider implements BaseProvider {
     //   submit,
     // };
 
-    throw new Error('Not implemented ');
+    throw new Error("Not implemented ");
   }
 
   public static async fromContracts<T extends Contracts<M>, M>(
@@ -183,7 +179,6 @@ export class ApiProvider implements BaseProvider {
     network: StacksNetwork,
     secretDeployKey: string
   ) {
-    
     let codeBody = fs.readFileSync(contractPath).toString();
 
     var transaction = await makeContractDeploy({
@@ -191,11 +186,11 @@ export class ApiProvider implements BaseProvider {
       codeBody,
       senderKey: secretDeployKey,
       network,
-      anchorMode: 3
+      anchorMode: 3,
     });
 
     console.log(`deploy contract ${contractName}`);
-    
+
     return this.handleTransaction(transaction, network);
   }
 

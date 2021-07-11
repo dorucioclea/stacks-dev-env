@@ -1,5 +1,5 @@
 import { ApiProvider } from "../shared/providers/api-provider";
-import { contracts } from '../src';
+import { contracts } from "../src";
 import { ADDR1, testnetKeyMap } from "../configuration/testnet";
 import { StacksNetwork } from "@stacks/network";
 import { StacksNetworkConfiguration } from "../configuration/stacks-network";
@@ -15,11 +15,11 @@ const network: StacksNetwork = new StacksNetworkConfiguration();
 
 beforeAll(async () => {
   const deployed = await ApiProvider.fromContracts(contracts, network, {
-      secretKey: TOKEN_OWNER.secretKey,
-      stacksAddress: TOKEN_OWNER.address
+    secretKey: TOKEN_OWNER.secretKey,
+    stacksAddress: TOKEN_OWNER.address,
   });
 
-  Logger.debug('Deployed contracts to testnet');
+  Logger.debug("Deployed contracts to testnet");
   Logger.debug(JSON.stringify(deployed));
 
   // counter = deployed.counter.contract;

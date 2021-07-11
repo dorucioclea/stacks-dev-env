@@ -1,6 +1,6 @@
 import { config } from "./config";
 
-const levels = ['debug', 'info', 'warn', 'error', 'none'];
+const levels = ["debug", "info", "warn", "error", "none"];
 
 const levelToInt: { [level: string]: number } = {};
 const intToLevel: { [int: number]: string } = {};
@@ -16,23 +16,23 @@ for (let index = 0; index < levels.length; index++) {
  */
 export class Logger {
   static error(message: string) {
-    if (!this.shouldLog('error')) return;
-    console.error(this.logMessage('error', message));
+    if (!this.shouldLog("error")) return;
+    console.error(this.logMessage("error", message));
   }
 
   static warn(message: string) {
-    if (!this.shouldLog('warn')) return;
-    console.warn(this.logMessage('warn', message));
+    if (!this.shouldLog("warn")) return;
+    console.warn(this.logMessage("warn", message));
   }
 
   static info(message: string) {
-    if (!this.shouldLog('info')) return;
-    console.log(this.logMessage('info', message));
+    if (!this.shouldLog("info")) return;
+    console.log(this.logMessage("info", message));
   }
 
   static debug(message: string) {
-    if (!this.shouldLog('debug')) return;
-    console.log(this.logMessage('debug', message));
+    if (!this.shouldLog("debug")) return;
+    console.log(this.logMessage("debug", message));
   }
 
   static logMessage(level: string, message: string) {

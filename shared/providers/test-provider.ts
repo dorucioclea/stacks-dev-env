@@ -22,12 +22,12 @@ import { ClarinetAccounts } from "../configuration/types";
 import { getDefaultClarityBin } from "../adapter/get-default-clarity-bin";
 import { deployUtilContract } from "../test-utils/deploy-util-contract";
 import { getContractIdentifier } from "../utils/contract-identifier";
-import { getContractNameFromPath } from '../utils/contract-name-for-path';
+import { getContractNameFromPath } from "../utils/contract-name-for-path";
 import { evalJson } from "../adapter/eval-json";
 import { executeJson } from "../adapter/execute-json";
-import { parseToCV } from '../clarity/parse-to-cv'
-import { cvToValue } from '../clarity/cv-to-value'
-import { instanceOfMetadata } from './types';
+import { parseToCV } from "../clarity/parse-to-cv";
+import { cvToValue } from "../clarity/cv-to-value";
+import { instanceOfMetadata } from "./types";
 
 export class TestProvider implements BaseProvider {
   clarityBin: NativeClarityBinProvider;
@@ -96,7 +96,10 @@ export class TestProvider implements BaseProvider {
   }
 
   async callReadOnly(request: IProviderRequest) {
-    const argsFormatted = this.formatArguments(request.function, request.arguments);
+    const argsFormatted = this.formatArguments(
+      request.function,
+      request.arguments
+    );
     const result = await evalJson({
       contractAddress: this.client.name,
       functionName: request.function.name,
@@ -118,7 +121,10 @@ export class TestProvider implements BaseProvider {
   }
 
   callPublic(request: IProviderRequest): Transaction<any, any> {
-    const argsFormatted = this.formatArguments(request.function, request.arguments);
+    const argsFormatted = this.formatArguments(
+      request.function,
+      request.arguments
+    );
     const submit: Submitter<any, any> = async (options) => {
       if (!("sender" in options)) {
         throw new Error("Passing `sender` is required.");
@@ -163,17 +169,16 @@ export class TestProvider implements BaseProvider {
   }
 
   formatArguments(func: ClarityAbiFunction, args: any[]): string[] {
-    var metadata = args.filter(arg => instanceOfMetadata(arg));
-    
+    var metadata = args.filter((arg) => instanceOfMetadata(arg));
+
     if (metadata.length > 1) {
       throw new TypeError("More than one metadata objects");
     }
 
-    var argsWithoutMetadata = metadata.length == 1 ? 
-        args.filter(x => x !== metadata[0])
-        : args;
+    var argsWithoutMetadata =
+      metadata.length == 1 ? args.filter((x) => x !== metadata[0]) : args;
 
-    var formatted =  argsWithoutMetadata.map((arg, index) => {
+    var formatted = argsWithoutMetadata.map((arg, index) => {
       const { type } = func.args[index];
       if (type === "trait_reference") {
         return `'${arg}`;

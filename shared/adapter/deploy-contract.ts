@@ -4,7 +4,6 @@ export async function deployContract(
   client: Client,
   provider: NativeClarityBinProvider
 ) {
-
   const receipt = await provider.runCommand([
     "launch",
     client.name,
