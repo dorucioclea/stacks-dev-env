@@ -1,6 +1,6 @@
 import { generateFilesForContract } from "../shared/abi";
 import { CONTRACTS, GENERATION_FOLDER } from "./contracts";
-import { ADDR1 } from "../test/testnet";
+import { ADDR1 } from "../configuration";
 import { NativeClarityBinProvider } from "@blockstack/clarity";
 import { createDefaultTestProvider } from '../shared/default-test-provider';
 import { contractWithSubDirectory } from "../shared/utils/contract-with-subdirectory";

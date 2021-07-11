@@ -14,6 +14,6 @@ export const sip10FtStandardContract = (provider: BaseProvider) => {
 
 export const sip10FtStandardInfo: Contract<Sip10FtStandardContract> = {
   contract: sip10FtStandardContract,
-  address: 'ST1HJ4TYWQV3MCSP2T751GDN39PTENCX72HPQYDCM',
+  address: 'ST2ZRX0K27GW0SP3GJCEMHD95TQGJMKB7G9Y0X1MH',
   contractFile: 'contracts\\sip-10-ft-standard.clar',
 };

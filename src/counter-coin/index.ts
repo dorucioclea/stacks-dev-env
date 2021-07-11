@@ -14,6 +14,6 @@ export const counterCoinContract = (provider: BaseProvider) => {
 
 export const counterCoinInfo: Contract<CounterCoinContract> = {
   contract: counterCoinContract,
-  address: 'ST1HJ4TYWQV3MCSP2T751GDN39PTENCX72HPQYDCM',
+  address: 'ST2ZRX0K27GW0SP3GJCEMHD95TQGJMKB7G9Y0X1MH',
   contractFile: 'contracts\\counter-coin.clar',
 };

@@ -58,6 +58,7 @@ export class ApiProvider implements BaseProvider {
       request.function,
       request.arguments
     );
+    
     await this.callContractFunction(
       this.contractName,
       request.function.name,
@@ -66,61 +67,63 @@ export class ApiProvider implements BaseProvider {
     );
   }
 
-  callPublic(request: IProviderRequest): Transaction<any, any> {
-    let formattedArguments: [string[], IMetadata] = this.formatArguments(
-      request.function,
-      request.arguments
-    );
-    var metadata = formattedArguments[1];
-    var args = formattedArguments[0];
-    const submit: Submitter<any, any> = async (_options) => {
-      if (metadata.sender == null) {
-        throw new Error("Passing `sender` is required.");
-      }
+  callPublic(_request: IProviderRequest): Transaction<any, any> {
+    // let formattedArguments: [string[], IMetadata] = this.formatArguments(
+    //   request.function,
+    //   request.arguments
+    // );
+    // var metadata = formattedArguments[1];
+    // var args = formattedArguments[0];
+    // const submit: Submitter<any, any> = async (_options) => {
+    //   if (metadata.sender == null) {
+    //     throw new Error("Passing `sender` is required.");
+    //   }
 
-      let getResult: GetResultType;
+    //   let getResult: GetResultType;
 
-      try {
-        var rawTransactionResult = await this.callContractFunction(
-          this.contractName,
-          request.function.name,
-          metadata.sender,
-          args
-        );
+    //   try {
+    //     var rawTransactionResult = await this.callContractFunction(
+    //       this.contractName,
+    //       request.function.name,
+    //       metadata.sender,
+    //       args
+    //     );
 
-        getResult = (): Promise<TransactionResult<any, any>> => {
-          const resultCV = deserializeCV(
-            Buffer.from(rawTransactionResult, "hex")
-          );
-          const result = cvToValue(resultCV);
+    //     getResult = (): Promise<TransactionResult<any, any>> => {
+    //       const resultCV = deserializeCV(
+    //         Buffer.from(rawTransactionResult, "hex")
+    //       );
+    //       const result = cvToValue(resultCV);
 
-          return Promise.resolve({
-            isOk: true,
-            response: responseOkCV(resultCV),
-            value: result,
-          });
-        };
-      } catch (error) {
-        getResult = (): Promise<TransactionResult<any, any>> => {
-          const resultCV = deserializeCV(
-            Buffer.from(rawTransactionResult, "hex")
-          );
-          const result = cvToValue(resultCV);
+    //       return Promise.resolve({
+    //         isOk: true,
+    //         response: responseOkCV(resultCV),
+    //         value: result,
+    //       });
+    //     };
+    //   } catch (error) {
+    //     getResult = (): Promise<TransactionResult<any, any>> => {
+    //       const resultCV = deserializeCV(
+    //         Buffer.from(rawTransactionResult, "hex")
+    //       );
+    //       const result = cvToValue(resultCV);
 
-          return Promise.resolve({
-            isOk: false,
-            response: responseErrorCV(resultCV),
-            value: result,
-          });
-        };
-      }
-      return {
-        getResult,
-      };
-    };
-    return {
-      submit,
-    };
+    //       return Promise.resolve({
+    //         isOk: false,
+    //         response: responseErrorCV(resultCV),
+    //         value: result,
+    //       });
+    //     };
+    //   }
+    //   return {
+    //     getResult,
+    //   };
+    // };
+    // return {
+    //   submit,
+    // };
+
+    throw new Error('Not implemented ');
   }
 
   public static async fromContracts<T extends Contracts<M>, M>(

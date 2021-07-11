@@ -164,6 +164,7 @@ export class TestProvider implements BaseProvider {
 
   formatArguments(func: ClarityAbiFunction, args: any[]): string[] {
     var metadata = args.filter(arg => instanceOfMetadata(arg));
+    
     if (metadata.length > 1) {
       throw new TypeError("More than one metadata objects");
     }
@@ -171,9 +172,6 @@ export class TestProvider implements BaseProvider {
     var argsWithoutMetadata = metadata.length == 1 ? 
         args.filter(x => x !== metadata[0])
         : args;
-
-    console.log("argswithoutmetadata --> " +  JSON.stringify(argsWithoutMetadata));
-  
 
     var formatted =  argsWithoutMetadata.map((arg, index) => {
       const { type } = func.args[index];
@@ -187,7 +185,6 @@ export class TestProvider implements BaseProvider {
       }
       return cvString;
     });
-
 
     return formatted;
   }

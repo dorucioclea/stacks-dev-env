@@ -2,12 +2,13 @@ import { TestProvider } from "../shared/providers/test-provider";
 import { txErr, txOk } from "../shared/transaction";
 import { CounterCoinContract, CounterContract, contracts } from '../src';
 import { NO_METADATA } from "../shared/providers/types";
-import { ADDR1, ADDR2, testnetKeyMap } from "../configuration/testnet";
+import { ADDR1, ADDR2, ADDR3, testnetKeyMap } from "../configuration/testnet";
 
-const keys = testnetKeyMap[ADDR1];
-const deployer = keys.address;
-const alice = ADDR1;
-const bob   =  ADDR2;
+const TOKEN_OWNER = testnetKeyMap[ADDR1];
+
+const alice = ADDR2;
+const bob   = ADDR3;
+
 let counter: CounterContract;
 let token: CounterCoinContract;
 
@@ -43,7 +44,7 @@ test('can decrement', async () => {
 
 test('alice can transfer', async () => {
   const result = await txOk(token.transfer(100, alice, bob, null, NO_METADATA), alice);
-  expect(result.assets?.tokens[alice][`${deployer}.counter-coin::counter-token`]).toEqual('100')
+  expect(result.assets.tokens[alice][`${TOKEN_OWNER.address}.counter-coin::counter-token`]).toEqual('100')
 });
 
 test('transfer with memo', async () => {
