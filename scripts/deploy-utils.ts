@@ -8,21 +8,14 @@ import {
   SignedContractCallOptions,
   SignedMultiSigContractCallOptions,
 } from "@stacks/transactions";
-import { StacksTestnet } from "@stacks/network";
 import { Logger } from "../shared/logger/logger";
-
 import * as fs from "fs";
 const fetch = require("node-fetch");
 
 import { ADDR1, testnetKeyMap } from "../configuration/testnet";
 import { Contracts } from "../shared/types";
 import { getContractNameFromPath } from "../shared/utils/contract-name-for-path";
-
-const STACKS_CORE_API_URL = "http://localhost:3999";
-
-export const network = new StacksTestnet();
-
-network.coreApiUrl = STACKS_CORE_API_URL;
+import { getTransactionUrl, NETWORK } from '../configuration'
 
 const keys = testnetKeyMap[ADDR1];
 
@@ -37,7 +30,7 @@ export const deployContractAddress = deployKey.address;
 export const secretDeployKey = deployKey.secretKey;
 
 export async function handleTransaction(transaction: StacksTransaction) {
-  const result = await broadcastTransaction(transaction, network);
+  const result = await broadcastTransaction(transaction, NETWORK);
   Logger.debug(`Broadcast transaction result: ${JSON.stringify(result)}`);
   
   if ((result as TxBroadcastResultRejected).error) {
@@ -80,7 +73,7 @@ export async function callContractFunction(
     functionName: functionName,
     functionArgs: args,
     senderKey: sender,
-    network,
+    network: NETWORK,
     postConditionMode: 0x01, // PostconditionMode.Allow
     anchorMode: 3,
   };
@@ -103,7 +96,7 @@ export async function deployContract<T extends Contracts<M>, M>(
     contractName,
     codeBody,
     senderKey: secretDeployKey,
-    network,
+    network: NETWORK,
     anchorMode: 3,
   });
 
@@ -123,8 +116,7 @@ async function processingWithSidecar(
   tx: String,
   count: number = 0
 ): Promise<boolean> {
-  const url = `${STACKS_CORE_API_URL}/extended/v1/tx/${tx}`;
-  var result = await fetch(url);
+  var result = await fetch(getTransactionUrl(tx));
   var value = await result.json();
   Logger.debug(`${count}`);
   if (value.tx_status === "success") {
