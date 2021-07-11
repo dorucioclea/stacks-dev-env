@@ -77,3 +77,6 @@ Where the private key is taken from the config.toml configuration file of /provi
 
 stx deploy_contract ./contracts/dao-token-trait.clar dao-token-trait 200 0 <private_key> -t -I "http://localhost:20443"
 
+* Useful:
+
+for f in *; do npx cti create ./$f; done

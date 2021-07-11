@@ -1,11 +1,12 @@
-import { Transaction } from '../../shared/transaction';
-import { ClarityTypes } from '../../shared/clarity/types';
+import { Transaction } from "../../shared/transaction";
+import { ClarityTypes } from "../../shared/clarity/types";
+import { IMetadata } from "../../shared/providers/types";
 
 // prettier-ignore
 
 export interface CounterContract {
 
-  decrement: () => Transaction<number, number>;
-  increment: () => Transaction<number, number>;
-  getCounter: () => Promise<number>;
+  decrement: (metadata: IMetadata) => Transaction<number, number>;
+  increment: (metadata: IMetadata) => Transaction<number, number>;
+  getCounter: (metadata: IMetadata) => Promise<number>;
 }

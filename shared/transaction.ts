@@ -1,4 +1,4 @@
-import { PostCondition, StacksTransaction } from '@stacks/transactions';
+import { PostCondition, StacksTransaction } from "@stacks/transactions";
 
 export interface ResultAssets {
   stx: Record<string, string>;
@@ -30,18 +30,22 @@ export interface TransactionResultErr<Err> {
   isOk: false;
 }
 
-export type TransactionResult<Ok, Err> = TransactionResultOk<Ok> | TransactionResultErr<Err>;
+export type TransactionResult<Ok, Err> =
+  | TransactionResultOk<Ok>
+  | TransactionResultErr<Err>;
 
 export interface TransactionReceiptBase<Ok, Err> {
   getResult: () => Promise<TransactionResult<Ok, Err>>;
 }
 
-export interface WebTransactionReceipt<Ok, Err> extends TransactionReceiptBase<Ok, Err> {
+export interface WebTransactionReceipt<Ok, Err>
+  extends TransactionReceiptBase<Ok, Err> {
   txId: string;
   stacksTransaction: StacksTransaction;
 }
 
-export interface TestTransacionReceipt<Ok, Err> extends TransactionReceiptBase<Ok, Err> {
+export interface TestTransacionReceipt<Ok, Err>
+  extends TransactionReceiptBase<Ok, Err> {
   result: TransactionResult<Ok, Err>;
 }
 
@@ -60,7 +64,9 @@ export interface TestSignerOptions {
 
 export type SubmitOptions = TestSignerOptions | WebSignerOptions;
 
-export type Submitter<Ok, Err> = (options: SubmitOptions) => Promise<TransactionReceipt<Ok, Err>>;
+export type Submitter<Ok, Err> = (
+  options: SubmitOptions
+) => Promise<TransactionReceipt<Ok, Err>>;
 
 interface ResponseOk<Ok> {
   value: Ok;
@@ -84,12 +90,14 @@ export async function tx<A, B>(tx: Transaction<A, B>, sender: string) {
 
 export async function txOk<A, B>(_tx: Transaction<A, B>, sender: string) {
   const result = await tx(_tx, sender);
-  if (!result.isOk) throw new Error(`Expected transaction ok, got error: ${result.value}`);
+  if (!result.isOk)
+    throw new Error(`Expected transaction ok, got error: ${result.value}`);
   return result;
 }
 
 export async function txErr<A, B>(_tx: Transaction<A, B>, sender: string) {
   const result = await tx(_tx, sender);
-  if (result.isOk) throw new Error(`Expected transaction error, got ok: ${result.value}`);
+  if (result.isOk)
+    throw new Error(`Expected transaction error, got ok: ${result.value}`);
   return result;
 }

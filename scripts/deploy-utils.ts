@@ -6,35 +6,38 @@ import {
   TxBroadcastResultRejected,
   makeContractCall,
   SignedContractCallOptions,
-  SignedMultiSigContractCallOptions
+  SignedMultiSigContractCallOptions,
 } from "@stacks/transactions";
-import { StacksTestnet } from "@stacks/network";
-require('dotenv').config();
-
+import { Logger } from "../shared/logger";
 import * as fs from "fs";
 const fetch = require("node-fetch");
 
-import { ADDR1, ADDR4, testnetKeyMap } from "./mocknet";
-
-
-const STACKS_CORE_API_URL = "http://localhost:3999";
-export const network = new StacksTestnet();
-network.coreApiUrl = STACKS_CORE_API_URL;
+import { ADDR1, testnetKeyMap } from "../configuration/testnet";
+import { Contracts } from "../shared/types";
+import { getContractNameFromPath } from "../shared/utils/contract-name-for-path";
+import { getTransactionUrl, NETWORK } from "../configuration";
 
 const keys = testnetKeyMap[ADDR1];
 
 export const secretKey = keys.secretKey;
+
 export const contractAddress = keys.address;
-const deployKey = testnetKeyMap[ADDR4];
+
+const deployKey = testnetKeyMap[ADDR1];
+
 export const deployContractAddress = deployKey.address;
+
 export const secretDeployKey = deployKey.secretKey;
 
 export async function handleTransaction(transaction: StacksTransaction) {
-  const result = await broadcastTransaction(transaction, network);
-  console.log(result);
+  const result = await broadcastTransaction(transaction, NETWORK);
+  Logger.debug(`Broadcast transaction result: ${JSON.stringify(result)}`);
+
   if ((result as TxBroadcastResultRejected).error) {
-    if ((result as TxBroadcastResultRejected).reason === "ContractAlreadyExists") {
-      console.log("already deployed");
+    if (
+      (result as TxBroadcastResultRejected).reason === "ContractAlreadyExists"
+    ) {
+      Logger.debug("already deployed");
       return "" as TxBroadcastResultOk;
     } else {
       throw new Error(
@@ -44,46 +47,60 @@ export async function handleTransaction(transaction: StacksTransaction) {
       );
     }
   }
+
   const processed = await processing(result as TxBroadcastResultOk);
   if (!processed) {
     throw new Error(
       `failed to process transaction ${transaction.txid}: transaction not found`
     );
   }
-  console.log(processed, result);
+
+  Logger.debug(`Processed: ${processed}, Result: ${JSON.stringify(result)}`);
   return result as TxBroadcastResultOk;
 }
 
-export async function callContractFunction(contractName: string, functionName: string, sender: any, args: any) {
-  const txOptions: SignedContractCallOptions | SignedMultiSigContractCallOptions = {
+export async function callContractFunction(
+  contractName: string,
+  functionName: string,
+  sender: any,
+  args: any
+) {
+  const txOptions:
+    | SignedContractCallOptions
+    | SignedMultiSigContractCallOptions = {
     contractAddress: deployContractAddress,
     contractName: contractName,
     functionName: functionName,
     functionArgs: args,
     senderKey: sender,
-    network,
+    network: NETWORK,
     postConditionMode: 0x01, // PostconditionMode.Allow
-    anchorMode: 3
+    anchorMode: 3,
   };
 
-  console.log('Sending transaction', contractName);
+  Logger.debug(`Sending transaction ${contractName}`);
   const transaction = await makeContractCall(txOptions);
-  console.log(transaction);
+  Logger.debug(`Transaction: ${transaction}`);
 
   return handleTransaction(transaction);
 }
 
-export async function deployContract(contractName: string, changeCode: (str: string) => string = unchanged) {
-  let codeBody = fs.readFileSync(`./contracts/${contractName}.clar`).toString();;
+export async function deployContract<T extends Contracts<M>, M>(
+  contract: T[Extract<keyof T, string>]
+) {
+  const contractName = getContractNameFromPath(contract.contractFile);
+
+  let codeBody = fs.readFileSync(`./contracts/${contractName}.clar`).toString();
+
   var transaction = await makeContractDeploy({
     contractName,
-    codeBody: changeCode(codeBody),
+    codeBody,
     senderKey: secretDeployKey,
-    network,
-    anchorMode: 3
+    network: NETWORK,
+    anchorMode: 3,
   });
 
-  console.log(`deploy contract ${contractName}`);
+  Logger.debug(`deploy contract ${contractName}`);
   return handleTransaction(transaction);
 }
 
@@ -99,24 +116,23 @@ async function processingWithSidecar(
   tx: String,
   count: number = 0
 ): Promise<boolean> {
-  const url = `${STACKS_CORE_API_URL}/extended/v1/tx/${tx}`;
-  var result = await fetch(url);
+  var result = await fetch(getTransactionUrl(tx));
   var value = await result.json();
-  console.log(count);
+  Logger.debug(`${count}`);
   if (value.tx_status === "success") {
-    console.log(`transaction ${tx} processed`);
-    console.log(value);
+    Logger.debug(`transaction ${tx} processed`);
+    Logger.debug(value);
     return true;
   }
   if (value.tx_status === "pending") {
-    console.log(value);
+    Logger.debug(value);
   } else if (count === 3) {
-    console.log(value);
+    Logger.debug(value);
   }
 
   if (count > 20) {
-    console.log("failed after 10 tries");
-    console.log(value);
+    Logger.debug("failed after 10 tries");
+    Logger.debug(value);
     return false;
   }
 

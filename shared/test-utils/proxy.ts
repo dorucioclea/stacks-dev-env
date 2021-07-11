@@ -1,6 +1,6 @@
-import { ClarityAbi } from "../clarity/types";
-import { BaseProvider } from "../providers/base-provider";
-import { toCamelCase } from "../utils/to-camel-case";
+import { ClarityAbi } from "../clarity";
+import { BaseProvider } from "../providers";
+import { toCamelCase } from "../utils";
 
 const makeHandler = (provider: BaseProvider) => {
   const handler: ProxyHandler<ClarityAbi> = {
@@ -11,11 +11,17 @@ const makeHandler = (provider: BaseProvider) => {
       if (foundFunction) {
         if (foundFunction.access === "read_only") {
           return (...args: any[]) => {
-            return provider.callReadOnly(foundFunction, args);
+            return provider.callReadOnly({
+              arguments: args,
+              function: foundFunction,
+            });
           };
         } else if (foundFunction.access === "public") {
           return (...args: any[]) => {
-            return provider.callPublic(foundFunction, args);
+            return provider.callPublic({
+              arguments: args,
+              function: foundFunction,
+            });
           };
         }
       }

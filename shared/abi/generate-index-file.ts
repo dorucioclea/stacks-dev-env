@@ -1,7 +1,5 @@
-import path from "path";
 import { CONTRACT_EXTENSION, CONTRACT_FOLDER } from "../constants";
-import { getContractNameFromPath } from "../utils/contract-name-for-path";
-import { toCamelCase } from "../utils/to-camel-case";
+import { getContractNameFromPath, toCamelCase } from "../utils";
 
 export function generateIndexFile({
   contractFile,
@@ -10,7 +8,6 @@ export function generateIndexFile({
   contractFile: string;
   address: string;
 }) {
-  
   const contractName = getContractNameFromPath(contractFile).normalize();
 
   const contractTitle = toCamelCase(contractName, true);

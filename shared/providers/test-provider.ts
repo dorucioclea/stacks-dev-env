@@ -9,7 +9,7 @@ import {
 } from "@stacks/transactions";
 
 import { ok, err } from "neverthrow";
-import { BaseProvider } from "./base-provider";
+import { BaseProvider, IProviderRequest } from ".";
 import { Submitter, Transaction, TransactionResult } from "../transaction";
 import {
   ContractInstances,
@@ -17,16 +17,18 @@ import {
   CreateOptions,
   FromContractOptions,
 } from "../types";
-import { deployContract } from "../adapter/deploy-contract";
-import { ClarinetAccounts } from "../adapter/types";
-import { getDefaultClarityBin } from "../adapter/get-default-clarity-bin";
-import { deployUtilContract } from "../test-utils/deploy-util-contract";
-import { getContractIdentifier } from "../utils/contract-identifier";
-import { getContractNameFromPath } from '../utils/contract-name-for-path';
-import { evalJson } from "../adapter/eval-json";
-import { executeJson } from "../adapter/execute-json";
-import { parseToCV } from '../clarity/parse-to-cv'
-import { cvToValue } from '../clarity/cv-to-value'
+
+import {
+  deployContract,
+  getDefaultClarityBin,
+  evalJson,
+  executeJson,
+} from "../adapter";
+import { ClarinetAccounts } from "../configuration";
+import { deployUtilContract } from "../test-utils";
+import { getContractIdentifier, getContractNameFromPath } from "../utils";
+import { parseToCV, cvToValue } from "../clarity";
+import { instanceOfMetadata } from "./types";
 
 export class TestProvider implements BaseProvider {
   clarityBin: NativeClarityBinProvider;
@@ -94,11 +96,14 @@ export class TestProvider implements BaseProvider {
     return instances;
   }
 
-  async callReadOnly(func: ClarityAbiFunction, args: any[]) {
-    const argsFormatted = this.formatArguments(func, args);
+  async callReadOnly(request: IProviderRequest) {
+    const argsFormatted = this.formatArguments(
+      request.function,
+      request.arguments
+    );
     const result = await evalJson({
       contractAddress: this.client.name,
-      functionName: func.name,
+      functionName: request.function.name,
       args: argsFormatted,
       provider: this.clarityBin,
     });
@@ -116,8 +121,11 @@ export class TestProvider implements BaseProvider {
     }
   }
 
-  callPublic(func: ClarityAbiFunction, args: any[]): Transaction<any, any> {
-    const argsFormatted = this.formatArguments(func, args);
+  callPublic(request: IProviderRequest): Transaction<any, any> {
+    const argsFormatted = this.formatArguments(
+      request.function,
+      request.arguments
+    );
     const submit: Submitter<any, any> = async (options) => {
       if (!("sender" in options)) {
         throw new Error("Passing `sender` is required.");
@@ -126,7 +134,7 @@ export class TestProvider implements BaseProvider {
         provider: this.clarityBin,
         contractAddress: this.client.name,
         senderAddress: options.sender,
-        functionName: func.name,
+        functionName: request.function.name,
         args: argsFormatted,
       });
       const getResult = (): Promise<TransactionResult<any, any>> => {
@@ -162,7 +170,16 @@ export class TestProvider implements BaseProvider {
   }
 
   formatArguments(func: ClarityAbiFunction, args: any[]): string[] {
-    return args.map((arg, index) => {
+    var metadata = args.filter((arg) => instanceOfMetadata(arg));
+
+    if (metadata.length > 1) {
+      throw new TypeError("More than one metadata objects");
+    }
+
+    var argsWithoutMetadata =
+      metadata.length == 1 ? args.filter((x) => x !== metadata[0]) : args;
+
+    var formatted = argsWithoutMetadata.map((arg, index) => {
       const { type } = func.args[index];
       if (type === "trait_reference") {
         return `'${arg}`;
@@ -174,5 +191,7 @@ export class TestProvider implements BaseProvider {
       }
       return cvString;
     });
+
+    return formatted;
   }
 }
