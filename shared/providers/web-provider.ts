@@ -219,6 +219,7 @@ export class WebProvider implements BaseProvider {
         );
       }
     }
+
     const processed = await this.processing(
       network,
       result as TxBroadcastResultOk
@@ -228,6 +229,7 @@ export class WebProvider implements BaseProvider {
         `failed to process transaction ${transaction.txid}: transaction not found`
       );
     }
+
     console.log(processed, result);
     return result as TxBroadcastResultOk;
   }
@@ -301,16 +303,79 @@ export class WebProvider implements BaseProvider {
     const transaction = await makeContractCall(txOptions);
     console.log(transaction);
 
-    return WebProvider.handleTransaction(transaction, this.network);
+    return this.handleFunctionTransaction(transaction, this.network);
+  }
+
+  async handleFunctionTransaction(
+    transaction: StacksTransaction,
+    network: StacksNetwork
+  ): Promise<TxBroadcastResultOk> {
+    const result = await broadcastTransaction(transaction, network);
+    console.log(result);
+    if ((result as TxBroadcastResultRejected).error) {
+      throw new Error(
+        `failed to handle transaction ${transaction.txid()}: ${JSON.stringify(
+          result
+        )}`
+      );
+    }
+
+    const processed = await this.functionProcessing(
+      network,
+      result as TxBroadcastResultOk
+    );
+    if (!processed) {
+      throw new Error(
+        `failed to process transaction ${transaction.txid}: transaction not found`
+      );
+    }
+
+    console.log(processed, result);
+    return result as TxBroadcastResultOk;
+  }
+
+  async functionProcessing(
+    network: StacksNetwork,
+    tx: String,
+    count: number = 0
+  ): Promise<boolean> {
+    return this.functionProcessingWithSidecar(tx, count, network);
+  }
+
+  async functionProcessingWithSidecar(
+    tx: String,
+    count: number = 0,
+    network: StacksNetwork
+  ): Promise<boolean> {
+    const url = `${network.coreApiUrl}/extended/v1/tx/${tx}`;
+    var result = await fetch(url);
+    var value = await result.json();
+    console.log(count);
+    if (value.tx_status === "success") {
+      console.log(`transaction ${tx} processed`);
+      console.log(value);
+      return true;
+    }
+    if (value.tx_status === "pending") {
+      console.log(value);
+    } else if (count === 3) {
+      console.log(value);
+    }
+
+    if (count > 20) {
+      console.log("failed after 10 tries");
+      console.log(value);
+      return false;
+    }
+
+    await this.timeout(3000);
+    return this.functionProcessing(network, tx, count + 1);
   }
 
   formatArguments(
     func: ClarityAbiFunction,
     args: any[]
   ): [string[], IMetadata] {
-    // console.log(JSON.stringify(args));
-    // console.log(JSON.stringify(args.filter(arg => arg != null && arg != undefined)));
-
     var metadata = args.filter((arg) => instanceOfMetadata(arg));
     if (metadata.length > 1) {
       throw new TypeError("More than one metadata objects");
