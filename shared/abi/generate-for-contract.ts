@@ -2,7 +2,12 @@ import { getContractNameFromPath } from "../utils";
 import { NativeClarityBinProvider } from "@blockstack/clarity";
 import { resolve, relative } from "path";
 import { mkdir, writeFile } from "fs/promises";
-import { generateTypesFile, generateIndexFile, generateInterfaceFile, generateInterface } from ".";
+import {
+  generateTypesFile,
+  generateIndexFile,
+  generateInterfaceFile,
+  generateInterface,
+} from ".";
 
 export async function generateFilesForContract({
   contractFile: _contractFile,

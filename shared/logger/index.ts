@@ -1,4 +1,4 @@
 // created from 'create-ts-index'
 
-export * from './config';
-export * from './logger';
+export * from "./config";
+export * from "./logger";

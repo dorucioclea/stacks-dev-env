@@ -18,7 +18,12 @@ import {
   FromContractOptions,
 } from "../types";
 
-import { deployContract, getDefaultClarityBin, evalJson, executeJson } from "../adapter";
+import {
+  deployContract,
+  getDefaultClarityBin,
+  evalJson,
+  executeJson,
+} from "../adapter";
 import { ClarinetAccounts } from "../configuration";
 import { deployUtilContract } from "../test-utils";
 import { getContractIdentifier, getContractNameFromPath } from "../utils";

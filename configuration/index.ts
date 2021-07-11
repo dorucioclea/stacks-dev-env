@@ -1,9 +1,9 @@
 // created from 'create-ts-index'
 
-import { StacksNetworkConfiguration } from './stacks-network';
+import { StacksNetworkConfiguration } from "./stacks-network";
 
-export * from './stacks-network';
-export * from './testnet';
+export * from "./stacks-network";
+export * from "./testnet";
 
 export const NETWORK = new StacksNetworkConfiguration();
 
