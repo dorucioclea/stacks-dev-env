@@ -2,7 +2,7 @@ import { TestProvider } from "../shared/providers/test-provider";
 import { txErr, txOk } from "../shared/transaction";
 import { CounterCoinContract, CounterContract, contracts } from '../src';
 import { NO_METADATA } from "../shared/providers/types";
-import { ADDR1, ADDR2, testnetKeyMap } from "./testnet";
+import { ADDR1, ADDR2, testnetKeyMap } from "../configuration/testnet";
 
 const keys = testnetKeyMap[ADDR1];
 const deployer = keys.address;

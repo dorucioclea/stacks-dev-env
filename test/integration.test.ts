@@ -1,8 +1,8 @@
 import { ApiProvider } from "../shared/providers/api-provider";
 import { contracts } from '../src';
-import { ADDR1, testnetKeyMap } from "./testnet";
+import { ADDR1, testnetKeyMap } from "../configuration/testnet";
 import { StacksNetwork } from "@stacks/network";
-import { StacksNetworkConfiguration } from "./stacks-network";
+import { StacksNetworkConfiguration } from "../configuration/stacks-network";
 
 const keys = testnetKeyMap[ADDR1];
 // const alice = ADDR1;
