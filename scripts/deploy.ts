@@ -1,28 +1,20 @@
 import { Logger } from "../shared/logger/logger";
+import { Contracts } from "../shared/types";
+import { getContractNameFromPath } from "../shared/utils/contract-name-for-path";
+import { contracts } from "../src";
 import { deployContract } from "./deploy-utils";
 
-console.log('Deploying contracts');
-deployContracts();
+console.log("Deploying contracts");
+deployMany(contracts);
 
-async function deployContracts(): Promise<void> {
-    Logger.debug('Deploying contract simple-counter');
-    var result = await deployContract('simple-counter');
-    Logger.debug(`Contract deployed: ${result}`);
+async function deployMany<T extends Contracts<M>, M>(contracts: T) {
+  for (const k in contracts) {
+    const contract: T[Extract<keyof T, string>] = contracts[k];
 
-    Logger.debug('Deploying contract sip-10-ft-standard');
-    var result = await deployContract('sip-10-ft-standard');
-    Logger.debug(`Contract deployed: ${result}`);
+    const contractName = getContractNameFromPath(contract.contractFile);
+    Logger.debug(`Deploying contract ${contractName}`);
 
-    Logger.debug('Deploying contract counter-coin');
-    var result = await deployContract('counter-coin');
-    Logger.debug(`Contract deployed: ${result}`);
-
-    Logger.debug('Deploying contract counter');
-    var result = await deployContract('counter');
-    Logger.debug(`Contract deployed: ${result}`);
-
-    // simpleCounter: simpleCounterInfo,
-    // sip10FtStandard: sip10FtStandardInfo,
-    // counterCoin: counterCoinInfo,
-    // counter: counterInfo,
+    var result = await deployContract(contract);
+    Logger.debug(`Contract deployed: ${contractName} with result ${result}`);
+  }
 }
