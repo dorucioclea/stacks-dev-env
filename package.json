@@ -66,6 +66,7 @@
     "bitcoinjs-lib": "^5.2.0",
     "blockstack": "^19.2.2",
     "bn.js": "^4.12.0",
+    "create-ts-index": "^1.13.6",
     "neverthrow": "4.2.1",
     "node-fetch": "2.6.1",
     "prettier": "^2.3.2"
