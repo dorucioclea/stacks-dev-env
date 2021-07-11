@@ -34,10 +34,11 @@ import { getContractNameFromPath } from "../utils/contract-name-for-path";
 import { StacksNetwork } from "@stacks/network";
 import { Logger } from "../logger/logger";
 import { parseToCV } from "../clarity/parse-to-cv";
+import BN from "bn.js";
 
 type GetResultType = () => Promise<TransactionResult<any, any>>;
 
-export class WebProvider implements BaseProvider {
+export class ApiProvider implements BaseProvider {
   private readonly network: StacksNetwork;
   private readonly deployerAccount: DeployerAccount;
   private readonly contractName: string;
@@ -193,6 +194,7 @@ export class WebProvider implements BaseProvider {
       senderKey: secretDeployKey,
       network,
       anchorMode: 3,
+      fee: new BN(1000),
     });
 
     console.log(`deploy contract ${contractName}`);
