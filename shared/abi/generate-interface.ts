@@ -1,6 +1,6 @@
 import { NativeClarityBinProvider } from "@blockstack/clarity";
-import { ClarityAbi } from "../clarity/types";
-import { getContractNameFromPath } from "../utils/contract-name-for-path";
+import { ClarityAbi } from "../clarity";
+import { getContractNameFromPath } from "../utils";
 
 export async function generateInterface({
   provider,

@@ -1,6 +1,5 @@
-import { ClarityAbi } from "../clarity/types";
-import { getContractNameFromPath } from "../utils/contract-name-for-path";
-import { toCamelCase } from "../utils/to-camel-case";
+import { ClarityAbi } from "../clarity";
+import { getContractNameFromPath, toCamelCase } from "../utils";
 
 export function generateInterfaceFile({
   contractFile,

@@ -20,11 +20,10 @@ import {
 } from "../types";
 import { DeployerAccount, IMetadata, instanceOfMetadata } from "./types";
 import * as fs from "fs";
-import { getContractIdentifier } from "../utils/contract-identifier";
-import { getContractNameFromPath } from "../utils/contract-name-for-path";
+import { getContractIdentifier, getContractNameFromPath } from "../utils";
 import { StacksNetwork } from "@stacks/network";
 import { Logger } from "../logger";
-import { parseToCV } from "../clarity/parse-to-cv";
+import { parseToCV } from "../clarity";
 
 // type GetResultType = () => Promise<TransactionResult<any, any>>;
 

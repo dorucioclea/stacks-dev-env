@@ -1,7 +1,7 @@
 import { resolve } from "path";
 import { readFile } from "fs/promises";
 import { parse } from "@ltd/j-toml";
-import { ClarinetDevConfig } from "./types";
+import { ClarinetDevConfig } from ".";
 
 export async function getClarinetDevConfig(
   folder: string

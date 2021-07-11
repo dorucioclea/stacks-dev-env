@@ -1,6 +1,6 @@
 import { Client, NativeClarityBinProvider } from "@blockstack/clarity";
 import { join } from "path";
-import { deployContract } from "../adapter/deploy-contract";
+import { deployContract } from "../adapter";
 
 export const UTIL_CONTRACT_ID =
   "ST000000000000000000002AMW42H.clarigen-test-utils";

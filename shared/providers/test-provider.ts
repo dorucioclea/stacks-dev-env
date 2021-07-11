@@ -9,7 +9,7 @@ import {
 } from "@stacks/transactions";
 
 import { ok, err } from "neverthrow";
-import { BaseProvider, IProviderRequest } from "./base-provider";
+import { BaseProvider, IProviderRequest } from ".";
 import { Submitter, Transaction, TransactionResult } from "../transaction";
 import {
   ContractInstances,
@@ -17,16 +17,12 @@ import {
   CreateOptions,
   FromContractOptions,
 } from "../types";
-import { deployContract } from "../adapter/deploy-contract";
-import { ClarinetAccounts } from "../configuration/types";
-import { getDefaultClarityBin } from "../adapter/get-default-clarity-bin";
-import { deployUtilContract } from "../test-utils/deploy-util-contract";
-import { getContractIdentifier } from "../utils/contract-identifier";
-import { getContractNameFromPath } from "../utils/contract-name-for-path";
-import { evalJson } from "../adapter/eval-json";
-import { executeJson } from "../adapter/execute-json";
-import { parseToCV } from "../clarity/parse-to-cv";
-import { cvToValue } from "../clarity/cv-to-value";
+
+import { deployContract, getDefaultClarityBin, evalJson, executeJson } from "../adapter";
+import { ClarinetAccounts } from "../configuration";
+import { deployUtilContract } from "../test-utils";
+import { getContractIdentifier, getContractNameFromPath } from "../utils";
+import { parseToCV, cvToValue } from "../clarity";
 import { instanceOfMetadata } from "./types";
 
 export class TestProvider implements BaseProvider {

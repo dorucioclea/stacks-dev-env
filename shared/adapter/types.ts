@@ -1,3 +1,4 @@
+import { ClarinetAccounts } from "../configuration";
 import { ResultAssets } from "../transaction";
 
 export interface EvalOk {
@@ -47,3 +48,4 @@ export interface ExecuteErr {
 }
 
 export type ExecuteResult = ExecuteOk | ExecuteErr;
+export type AllocationOrAccounts = ClarinetAccounts | Allocation[];

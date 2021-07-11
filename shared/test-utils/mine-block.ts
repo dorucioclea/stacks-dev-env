@@ -1,6 +1,6 @@
 import { NativeClarityBinProvider } from "@blockstack/clarity";
-import { executeJson } from "../adapter/execute-json";
-import { UTIL_CONTRACT_ID } from "./deploy-util-contract";
+import { executeJson } from "../adapter";
+import { UTIL_CONTRACT_ID } from ".";
 
 export async function mineBlock(provider: NativeClarityBinProvider) {
   await executeJson({

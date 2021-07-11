@@ -6,7 +6,7 @@ export default function getAllocations(
   if (!allocations) return [];
   if ("deployer" in allocations) {
     return Object.values(allocations).map((a) => ({
-      amount: a.balance,
+      amount: Number(a.balance),
       principal: a.address,
     }));
   } else if (Array.isArray(allocations)) {

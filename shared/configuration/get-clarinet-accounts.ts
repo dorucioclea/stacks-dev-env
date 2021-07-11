@@ -1,4 +1,4 @@
-import { getClarinetTestnetConfig } from "./get-clarinet-dev-config";
+import { getClarinetTestnetConfig } from ".";
 import { generateWallet, getStxAddress } from "@stacks/wallet-sdk";
 import { ClarinetAccounts } from "./types";
 import { Logger } from "../logger";

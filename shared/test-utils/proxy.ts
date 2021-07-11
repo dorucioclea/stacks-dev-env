@@ -1,6 +1,6 @@
-import { ClarityAbi } from "../clarity/types";
-import { BaseProvider } from "../providers/base-provider";
-import { toCamelCase } from "../utils/to-camel-case";
+import { ClarityAbi } from "../clarity";
+import { BaseProvider } from "../providers";
+import { toCamelCase } from "../utils";
 
 const makeHandler = (provider: BaseProvider) => {
   const handler: ProxyHandler<ClarityAbi> = {

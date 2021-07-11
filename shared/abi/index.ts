@@ -1,5 +1,8 @@
-export { generateFilesForContract } from "./generate-for-contract";
-export { generateIndexFile } from "./generate-index-file";
-export { generateInterface } from "./generate-interface";
-export { generateInterfaceFile } from "./generate-interface-file";
-export { generateTypesFile } from "./generate-type-file";
+// created from 'create-ts-index'
+
+export * from './generate-for-contract';
+export * from './generate-index-file';
+export * from './generate-interface-file';
+export * from './generate-interface';
+export * from './generate-type-file';
+export * from './utils';
