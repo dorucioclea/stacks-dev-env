@@ -3,8 +3,9 @@ import { contracts } from '../src';
 import { ADDR1, testnetKeyMap } from "../configuration/testnet";
 import { StacksNetwork } from "@stacks/network";
 import { StacksNetworkConfiguration } from "../configuration/stacks-network";
+import { Logger } from "../shared/logger";
 
-const keys = testnetKeyMap[ADDR1];
+const TOKEN_OWNER = testnetKeyMap[ADDR1];
 // const alice = ADDR1;
 // const bob   =  ADDR2;
 // let counter: CounterContract;
@@ -14,13 +15,12 @@ const network: StacksNetwork = new StacksNetworkConfiguration();
 
 beforeAll(async () => {
   const deployed = await ApiProvider.fromContracts(contracts, network, {
-      secretKey: keys.secretKey,
-      stacksAddress: keys.address
+      secretKey: TOKEN_OWNER.secretKey,
+      stacksAddress: TOKEN_OWNER.address
   });
 
-
-  console.log('Deployed contracts to testnet yay');
-  console.log(JSON.stringify(deployed));
+  Logger.debug('Deployed contracts to testnet');
+  Logger.debug(JSON.stringify(deployed));
 
   // counter = deployed.counter.contract;
   // token = deployed.counterCoin.contract;

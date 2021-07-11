@@ -1,7 +1,7 @@
 import { getClarinetTestnetConfig } from "./get-clarinet-dev-config";
 import { generateWallet, getStxAddress } from '@stacks/wallet-sdk';
 import { ClarinetAccounts } from './types'
-import { Logger } from '../logger/logger'
+import { Logger } from '../logger'
 
 export async function getClarinetAccounts(
     folder: string

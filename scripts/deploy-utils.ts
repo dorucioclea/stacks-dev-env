@@ -8,7 +8,7 @@ import {
   SignedContractCallOptions,
   SignedMultiSigContractCallOptions,
 } from "@stacks/transactions";
-import { Logger } from "../shared/logger/logger";
+import { Logger } from "../shared/logger";
 import * as fs from "fs";
 const fetch = require("node-fetch");
 

@@ -1,4 +1,4 @@
-import { Logger } from '../shared/logger/logger';
+import { Logger } from '../shared/logger';
 import { getClarinetAccounts } from '../shared/configuration/get-clarinet-accounts';
 
 test("Clarinet configuration sanity check", async () =>{

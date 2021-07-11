@@ -1,4 +1,4 @@
-import { Logger } from "../shared/logger/logger";
+import { Logger } from "../shared/logger";
 import { Contracts } from "../shared/types";
 import { getContractNameFromPath } from "../shared/utils/contract-name-for-path";
 import { contracts } from "../src";

@@ -2,19 +2,15 @@ import {
   broadcastTransaction,
   ClarityAbiFunction,
   cvToString,
-  cvToValue,
-  deserializeCV,
   makeContractCall,
   makeContractDeploy,
-  responseErrorCV,
-  responseOkCV,
   SignedContractCallOptions,
   SignedMultiSigContractCallOptions,
   StacksTransaction,
   TxBroadcastResultOk,
   TxBroadcastResultRejected,
 } from "@stacks/transactions";
-import { Submitter, Transaction, TransactionResult } from "../transaction";
+import { Transaction } from "../transaction";
 import { BaseProvider, IProviderRequest } from "./base-provider";
 import {
   Contracts,
@@ -26,17 +22,15 @@ import {
   DeployerAccount,
   IMetadata,
   instanceOfMetadata,
-  unchanged,
 } from "./types";
 import * as fs from "fs";
 import { getContractIdentifier } from "../utils/contract-identifier";
 import { getContractNameFromPath } from "../utils/contract-name-for-path";
 import { StacksNetwork } from "@stacks/network";
-import { Logger } from "../logger/logger";
+import { Logger } from "../logger";
 import { parseToCV } from "../clarity/parse-to-cv";
-import BN from "bn.js";
 
-type GetResultType = () => Promise<TransactionResult<any, any>>;
+// type GetResultType = () => Promise<TransactionResult<any, any>>;
 
 export class ApiProvider implements BaseProvider {
   private readonly network: StacksNetwork;
@@ -58,7 +52,7 @@ export class ApiProvider implements BaseProvider {
       request.function,
       request.arguments
     );
-    
+
     await this.callContractFunction(
       this.contractName,
       request.function.name,
@@ -187,20 +181,21 @@ export class ApiProvider implements BaseProvider {
     contractName: string,
     contractPath: string,
     network: StacksNetwork,
-    secretDeployKey: string,
-    changeCode: (str: string) => string = unchanged
+    secretDeployKey: string
   ) {
+    
     let codeBody = fs.readFileSync(contractPath).toString();
+
     var transaction = await makeContractDeploy({
       contractName,
-      codeBody: changeCode(codeBody),
+      codeBody,
       senderKey: secretDeployKey,
       network,
-      anchorMode: 3,
-      fee: new BN(1000),
+      anchorMode: 3
     });
 
     console.log(`deploy contract ${contractName}`);
+    
     return this.handleTransaction(transaction, network);
   }
 
