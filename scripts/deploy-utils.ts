@@ -14,6 +14,7 @@ import {
   const fetch = require("node-fetch");
   
   import { ADDR1, testnetKeyMap } from "../configuration/testnet";
+import BN from "bn.js";
 
   const STACKS_CORE_API_URL = "http://localhost:3999";
   
@@ -85,7 +86,7 @@ import {
       senderKey: secretDeployKey,
       network,
       anchorMode: 3,
-      // fee: new BN(1000),
+      fee: new BN(1000),
       // nonce: new BN(10)
     });
   
