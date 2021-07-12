@@ -9,6 +9,8 @@ import {
   StacksTransaction,
   TxBroadcastResultOk,
   TxBroadcastResultRejected,
+  callReadOnlyFunction,
+  ClarityValue
 } from "@stacks/transactions";
 import { Transaction } from "../transaction";
 import { BaseProvider, IProviderRequest } from "./base-provider";
@@ -43,17 +45,22 @@ export class ApiProvider implements BaseProvider {
   }
 
   async callReadOnly(request: IProviderRequest): Promise<void> {
-    let formattedArguments: [string[], IMetadata] = this.formatArguments(
+    let formattedArguments: [ClarityValue[], IMetadata] = this.formatReadonlyArguments(
       request.function,
       request.arguments
     );
 
-    await this.callContractFunction(
-      this.contractName,
-      request.function.name,
-      arguments[1].sender,
-      formattedArguments[0]
-    );
+    var metadata = formattedArguments[1];
+    var args = formattedArguments[0];
+
+    await callReadOnlyFunction({
+      contractAddress: this.deployerAccount.stacksAddress,
+      contractName: this.contractName,
+      functionArgs: args,
+      functionName: request.function.name,
+      senderAddress: metadata.sender,
+      network: this.network
+    });
   }
 
   callPublic(_request: IProviderRequest): Transaction<any, any> {
@@ -395,6 +402,33 @@ export class ApiProvider implements BaseProvider {
         return `'${cvString}`;
       }
       return cvString;
+    });
+
+    return [formatted, metadataConfig];
+  }
+
+  formatReadonlyArguments(
+    func: ClarityAbiFunction,
+    args: any[]
+  ): [ClarityValue[], IMetadata] {
+    var metadata = args.filter((arg) => instanceOfMetadata(arg));
+    if (metadata.length > 1) {
+      throw new TypeError("More than one metadata objects");
+    }
+
+    var metadataConfig = metadata[0];
+
+    var argsWithoutMetadata =
+      metadata.length == 1 ? args.filter((x) => x !== metadataConfig) : args;
+
+    console.log(
+      "argswithoutmetadata --> " + JSON.stringify(argsWithoutMetadata)
+    );
+
+    var formatted = argsWithoutMetadata.map((arg, index) => {
+      const { type } = func.args[index];
+      const argCV = parseToCV(arg, type);
+      return argCV;
     });
 
     return [formatted, metadataConfig];
