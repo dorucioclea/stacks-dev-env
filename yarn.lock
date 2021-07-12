@@ -857,13 +857,6 @@
   resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.2.19.tgz#80f286b515897413c7a35bdda069cc80f2344233"
   integrity sha512-jRJgpRBuY+7izT7/WNXP/LsMO9YonsstuL+xuvycDyESpoDoIAsMd7suwpB4h9oEWB+ZlPTqJJ8EHomzNhwTPQ==
 
-"@types/dos2unix@1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@types/dos2unix/-/dos2unix-1.1.0.tgz#dbe2e79eca7d4e744127a5888e72fd63f4e63b48"
-  integrity sha512-enadBzUcLWW73nlJvH0HbcbWl2GMqmemLBKwywCgCjL3TJj/UvOC3xMjbO89Emwa7dIMRZdNVeNWYJYtnEmUbA==
-  dependencies:
-    "@types/glob" "*"
-
 "@types/elliptic@^6.4.12", "@types/elliptic@^6.4.9":
   version "6.4.12"
   resolved "https://registry.yarnpkg.com/@types/elliptic/-/elliptic-6.4.12.tgz#e8add831f9cc9a88d9d84b3733ff669b68eaa124"
@@ -2143,16 +2136,6 @@ domutils@^1.5.1:
     dom-serializer "0"
     domelementtype "1"
 
-dos2unix@1.1.2:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/dos2unix/-/dos2unix-1.1.2.tgz#2e3f3d70f88e5fb52ce44d2e3e3cec1cbdee49a2"
-  integrity sha1-Lj89cPiOX7Us5E0uPjzsHL3uSaI=
-  dependencies:
-    async "~0.2.9"
-    glob "~3.2.1"
-    node.extend "~1.0.5"
-    readable-stream "~1.0.2"
-
 dotenv-defaults@^2.0.1:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/dotenv-defaults/-/dotenv-defaults-2.0.2.tgz#6b3ec2e4319aafb70940abda72d3856770ee77ac"
@@ -2238,6 +2221,19 @@ entities@^2.0.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/entities/-/entities-2.2.0.tgz#098dc90ebb83d8dffa089d55256b351d34c4da55"
   integrity sha512-p92if5Nz619I0w+akJrLZH0MX0Pb5DX39XOwQTtXSdQQOaYH03S1uIQp4mhOZtAXrxq4ViO67YTiLBo2638o9A==
+
+eol-converter-cli@^1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/eol-converter-cli/-/eol-converter-cli-1.0.8.tgz#95cdcc1592f4519fb975c2d0091d7dceb239d575"
+  integrity sha512-+N4aWl2eAbcJBgcXiPBIkPuKUlpXGts5yPEYo0XnbaKHOqcnPuMOBUqXlwl+139V866iEXUziVOGDebR7z8Tzg==
+  dependencies:
+    eol "^0.9.1"
+    glob "^7.1.2"
+
+eol@^0.9.1:
+  version "0.9.1"
+  resolved "https://registry.yarnpkg.com/eol/-/eol-0.9.1.tgz#f701912f504074be35c6117a5c4ade49cd547acd"
+  integrity sha512-Ds/TEoZjwggRoz/Q2O7SE3i4Jm66mqTDfmdHdq/7DKVk3bro9Q8h6WdXKdPqFLMoqxrDK5SVRzHVPOS6uuGtrg==
 
 error-ex@^1.3.1:
   version "1.3.2"

@@ -9,6 +9,7 @@
     "integration": "jest integration.test.ts",
     "generate": "ts-node scripts/abi.ts",
     "deploy": "ts-node scripts/deploy.ts",
+    "eol": "npx eolConverter \"contracts/*.clar\"",
     "pretty": "prettier --write \"./**/*.{js,jsx,ts,json}\""
   },
   "repository": {
@@ -33,12 +34,10 @@
     "@ltd/j-toml": "^1.12.2",
     "@stacks/wallet-sdk": "^1.0.0-wallet-sdk.4",
     "@types/chai": "^4.2.17",
-    "@types/dos2unix": "1.1.0",
     "@types/node": "15.12.5",
     "@types/node-fetch": "2.5.10",
     "@types/webpack-env": "^1.16.0",
     "chai": "^4.3.4",
-    "dos2unix": "1.1.2",
     "dotenv": "^8.2.0",
     "dotenv-webpack": "6.0.2",
     "jest": "^26.6.3",
@@ -67,6 +66,7 @@
     "blockstack": "^19.2.2",
     "bn.js": "^4.12.0",
     "create-ts-index": "^1.13.6",
+    "eol-converter-cli": "^1.0.8",
     "neverthrow": "4.2.1",
     "node-fetch": "2.6.1",
     "prettier": "^2.3.2"
