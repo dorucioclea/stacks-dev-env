@@ -10,7 +10,8 @@ import {
   TxBroadcastResultOk,
   TxBroadcastResultRejected,
   callReadOnlyFunction,
-  ClarityValue
+  ClarityValue,
+  ReadOnlyFunctionOptions,
 } from "@stacks/transactions";
 import { Transaction } from "../transaction";
 import { BaseProvider, IProviderRequest } from "./base-provider";
@@ -25,7 +26,7 @@ import * as fs from "fs";
 import { getContractIdentifier, getContractNameFromPath } from "../utils";
 import { StacksNetwork } from "@stacks/network";
 import { Logger } from "../logger";
-import { parseToCV } from "../clarity";
+import { cvToValue, parseToCV } from "../clarity";
 
 // type GetResultType = () => Promise<TransactionResult<any, any>>;
 
@@ -44,7 +45,7 @@ export class ApiProvider implements BaseProvider {
     this.contractName = contractName;
   }
 
-  async callReadOnly(request: IProviderRequest): Promise<void> {
+  async callReadOnly(request: IProviderRequest): Promise<any> {
     let formattedArguments: [ClarityValue[], IMetadata] = this.formatReadonlyArguments(
       request.function,
       request.arguments
@@ -53,14 +54,29 @@ export class ApiProvider implements BaseProvider {
     var metadata = formattedArguments[1];
     var args = formattedArguments[0];
 
-    await callReadOnlyFunction({
+    let options: ReadOnlyFunctionOptions = {
       contractAddress: this.deployerAccount.stacksAddress,
       contractName: this.contractName,
       functionArgs: args,
       functionName: request.function.name,
       senderAddress: metadata.sender,
       network: this.network
-    });
+    };
+
+    try{
+      var cv = await callReadOnlyFunction(options);
+      const result = cvToValue(cv);
+      console.log('RESULT::: ', JSON.stringify(result));
+      return result;
+    } catch (error) {
+      Logger.error('----------------');
+      Logger.error(`Error calling readonly function ${request.function.name}`);
+      Logger.error('Arguments:');
+      Logger.error(JSON.stringify(options));
+      Logger.error(JSON.stringify(error));
+      Logger.error('----------------');
+      return null;
+    }
   }
 
   callPublic(_request: IProviderRequest): Transaction<any, any> {
