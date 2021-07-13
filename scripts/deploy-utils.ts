@@ -123,18 +123,18 @@ async function processingWithSidecar(
   Logger.debug(`${count}`);
   if (value.tx_status === "success") {
     Logger.debug(`transaction ${tx} processed`);
-    Logger.debug(value);
+    Logger.debug(JSON.stringify(value));
     return true;
   }
   if (value.tx_status === "pending") {
-    Logger.debug(value);
+    Logger.debug(JSON.stringify(value));
   } else if (count === 3) {
-    Logger.debug(value);
+    Logger.debug(JSON.stringify(value));
   }
 
   if (count > 20) {
     Logger.debug("failed after 10 tries");
-    Logger.debug(value);
+    Logger.debug(JSON.stringify(value));
     return false;
   }
 
