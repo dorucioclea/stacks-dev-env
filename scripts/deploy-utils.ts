@@ -10,7 +10,7 @@ import {
 } from "@stacks/transactions";
 import { Logger } from "../shared/logger";
 import * as fs from "fs";
-const fetch = require("node-fetch");
+import fetch from "node-fetch";
 
 import { ADDR1, testnetKeyMap } from "../configuration/testnet";
 import { Contracts } from "../shared/types";
@@ -116,7 +116,9 @@ async function processingWithSidecar(
   tx: String,
   count: number = 0
 ): Promise<boolean> {
-  var result = await fetch(getTransactionUrl(tx));
+  var transactionUrl: string = getTransactionUrl(tx);
+  
+  var result = await fetch(transactionUrl);
   var value = await result.json();
   Logger.debug(`${count}`);
   if (value.tx_status === "success") {
