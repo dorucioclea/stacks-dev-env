@@ -72,8 +72,6 @@ export class ApiProvider implements BaseProvider {
 
       const value = cvToValue(cv);
 
-      console.log("VALUE ", value);
-
       switch (cv.type) {
         case ClarityType.ResponseOk:
           return ok(value);
@@ -114,8 +112,6 @@ export class ApiProvider implements BaseProvider {
         args
       );
 
-      console.log('RAW FUNCTION CALL RESULT ::::: ', rawFunctionCallResult);
-     
       let successfulFunctionCallResult: TxBroadcastResultOk = '';
 
       let unsuccessfullFunctionCalResult: TxBroadcastResultRejected;
@@ -124,29 +120,20 @@ export class ApiProvider implements BaseProvider {
       if ((rawFunctionCallResult as TxBroadcastResultRejected).error) {
         success = false;
         unsuccessfullFunctionCalResult = rawFunctionCallResult as TxBroadcastResultRejected;
-
-        console.log('UNSUCCESSFULL CALL RESULT :: ', unsuccessfullFunctionCalResult);
-
       } else {
         success = true;
 
         var transactionID = rawFunctionCallResult as TxBroadcastResultOk;
 
-        console.log(`Fetching transaction with ID ${transactionID}`);
-        
         const url = `${this.network.coreApiUrl}/extended/v1/tx/${transactionID}`;
         var result = await fetch(url);
         successfulFunctionCallResult = await result.json();
-
-        console.log('SUCCESSFULL CALL RESULT ::::: ', successfulFunctionCallResult);
       }
 
         const getResult = (): Promise<TransactionResult<any, any>> => {
           if (success) {
 
             const sct: SmartContractTransaction = successfulFunctionCallResult as any as SmartContractTransaction;
-
-      console.log('sct IS ::::: ', JSON.stringify(sct));
 
             const resultCV = deserializeCV(
               sct.tx_result.hex
@@ -250,8 +237,6 @@ export class ApiProvider implements BaseProvider {
       anchorMode: 3,
     });
 
-    console.log(`deploy contract ${contractName}`);
-
     return this.handleTransaction(transaction, network);
   }
 
@@ -260,12 +245,11 @@ export class ApiProvider implements BaseProvider {
     network: StacksNetwork
   ): Promise<TxBroadcastResultOk> {
     const result = await broadcastTransaction(transaction, network);
-    console.log(result);
     if ((result as TxBroadcastResultRejected).error) {
       if (
         (result as TxBroadcastResultRejected).reason === "ContractAlreadyExists"
       ) {
-        console.log("already deployed");
+        Logger.info('Contract already deployed');
         return "" as TxBroadcastResultOk;
       } else {
         throw new Error(
@@ -287,7 +271,6 @@ export class ApiProvider implements BaseProvider {
       );
     }
 
-    console.log(processed, result);
     return result as TxBroadcastResultOk;
   }
 
@@ -312,19 +295,10 @@ export class ApiProvider implements BaseProvider {
     var result = await fetch(url);
     var value = await result.json();
     if (value.tx_status === "success") {
-      console.log(`transaction ${tx} processed`);
-      console.log(value);
       return true;
-    }
-    if (value.tx_status === "pending") {
-      console.log(value);
-    } else if (count === 3) {
-      console.log(value);
     }
 
     if (count > 20) {
-      console.log("failed after 10 tries");
-      console.log(value);
       return false;
     }
 
@@ -357,81 +331,65 @@ export class ApiProvider implements BaseProvider {
 
     Logger.debug(`Contract function call on ${contractName}::${functionName} ::${sender}`);
     const transaction = await makeContractCall(txOptions);
-    console.log(transaction);
-
-    return this.handleFunctionTransaction(transaction, this.network);
+    return this.handleFunctionTransaction(transaction, this.network, functionName, contractName);
   }
 
   async handleFunctionTransaction(
     transaction: StacksTransaction,
-    network: StacksNetwork
+    network: StacksNetwork,
+    functionName: string,
+    contractName: string
   ): Promise<TxBroadcastResult> {
     const result = await broadcastTransaction(transaction, network);
     if ((result as TxBroadcastResultRejected).error) {
-      // throw new Error(
-      //   `failed to handle transaction ${transaction.txid()}: ${JSON.stringify(
-      //     result
-      //   )}`
-      // );
-
       return result as TxBroadcastResultRejected;
     }
 
     const processed = await this.functionProcessing(
       network,
-      result as TxBroadcastResultOk
+      result as TxBroadcastResultOk,
+      functionName,
+      contractName
     );
 
     if (!processed) {
-      // throw new Error(
-      //   `failed to process transaction ${transaction.txid}: transaction not found`
-      // );
-
       return result as TxBroadcastResultRejected;
     }
 
-    console.log(processed, result);
     return result as TxBroadcastResultOk;
   }
 
   async functionProcessing(
     network: StacksNetwork,
     tx: String,
+    functionName: string,
+    contractName: string,
     count: number = 0
   ): Promise<boolean> {
-    return this.functionProcessingWithSidecar(tx, count, network);
+    return this.functionProcessingWithSidecar(tx, count, network, functionName, contractName);
   }
 
   async functionProcessingWithSidecar(
     tx: String,
     count: number = 0,
-    network: StacksNetwork
+    network: StacksNetwork,
+    functionName: string,
+    contractName: string,
   ): Promise<boolean> {
     const url = `${network.coreApiUrl}/extended/v1/tx/${tx}`;
     var result = await fetch(url);
     var value = await result.json();
-    // console.log(count);
-    
     if (value.tx_status === "success") {
-      console.log(`transaction ${tx} processed`);
-      console.log(value);
-      console.log(JSON.stringify(value.events[0].asset));
       return true;
     }
-    // if (value.tx_status === "pending") {
-    //   console.log(value);
-    // } else if (count === 3) {
-    //   console.log(value);
-    // }
 
     if (count > 30) {
-      console.log("failed after 10 tries");
-      console.log(value);
+      Logger.error(`Failed calling ${contractName}::${functionName} after 30 retries `);
       return false;
     }
 
     await this.timeout(3000);
-    return this.functionProcessing(network, tx, count + 1);
+    return this.functionProcessing(network, tx, functionName, contractName, count + 1);
   }
 
   formatArguments(
@@ -447,10 +405,6 @@ export class ApiProvider implements BaseProvider {
 
     var argsWithoutMetadata =
       metadata.length == 1 ? args.filter((x) => x !== metadataConfig) : args;
-
-    console.log(
-      "argswithoutmetadata --> " + JSON.stringify(argsWithoutMetadata)
-    );
 
     var formatted = argsWithoutMetadata.map((arg, index) => {
       const { type } = func.args[index];
@@ -481,10 +435,6 @@ export class ApiProvider implements BaseProvider {
 
     var argsWithoutMetadata =
       metadata.length == 1 ? args.filter((x) => x !== metadataConfig) : args;
-
-    console.log(
-      "argswithoutmetadata --> " + JSON.stringify(argsWithoutMetadata)
-    );
 
     var formatted = argsWithoutMetadata.map((arg, index) => {
       const { type } = func.args[index];
