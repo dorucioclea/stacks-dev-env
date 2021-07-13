@@ -33,7 +33,7 @@ import { getContractIdentifier, getContractNameFromPath } from "../utils";
 import { StacksNetwork } from "@stacks/network";
 import { Logger } from "../logger";
 import { cvToValue, parseToCV } from "../clarity";
-import { SmartContractTransaction } from '@stacks/stacks-blockchain-api-types';
+import { SmartContractTransaction } from "@stacks/stacks-blockchain-api-types";
 import { err, ok } from "neverthrow";
 
 export class ApiProvider implements BaseProvider {
@@ -112,14 +112,15 @@ export class ApiProvider implements BaseProvider {
         args
       );
 
-      let successfulFunctionCallResult: TxBroadcastResultOk = '';
+      let successfulFunctionCallResult: TxBroadcastResultOk = "";
 
       let unsuccessfullFunctionCalResult: TxBroadcastResultRejected;
 
       let success: boolean;
       if ((rawFunctionCallResult as TxBroadcastResultRejected).error) {
         success = false;
-        unsuccessfullFunctionCalResult = rawFunctionCallResult as TxBroadcastResultRejected;
+        unsuccessfullFunctionCalResult =
+          rawFunctionCallResult as TxBroadcastResultRejected;
       } else {
         success = true;
 
@@ -130,34 +131,32 @@ export class ApiProvider implements BaseProvider {
         successfulFunctionCallResult = await result.json();
       }
 
-        const getResult = (): Promise<TransactionResult<any, any>> => {
-          if (success) {
+      const getResult = (): Promise<TransactionResult<any, any>> => {
+        if (success) {
+          const sct: SmartContractTransaction =
+            successfulFunctionCallResult as any as SmartContractTransaction;
 
-            const sct: SmartContractTransaction = successfulFunctionCallResult as any as SmartContractTransaction;
+          const resultCV = deserializeCV(sct.tx_result.hex);
 
-            const resultCV = deserializeCV(
-              sct.tx_result.hex
-            );
-  
-            const result = cvToValue(resultCV);
+          const result = cvToValue(resultCV);
 
-            return Promise.resolve({
-              isOk: true,
-              response: responseOkCV(resultCV),
-              value: result,
-              events: sct.events,
-            });
-          } else {
-            return Promise.resolve({
-              isOk: false,
-              value: unsuccessfullFunctionCalResult.error,
-              response: responseErrorCV(noneCV())
-            });
-          }
-        };
-        return {
-          getResult,
-        };
+          return Promise.resolve({
+            isOk: true,
+            response: responseOkCV(resultCV),
+            value: result,
+            events: sct.events,
+          });
+        } else {
+          return Promise.resolve({
+            isOk: false,
+            value: unsuccessfullFunctionCalResult.error,
+            response: responseErrorCV(noneCV()),
+          });
+        }
+      };
+      return {
+        getResult,
+      };
     };
     return {
       submit,
@@ -249,7 +248,7 @@ export class ApiProvider implements BaseProvider {
       if (
         (result as TxBroadcastResultRejected).reason === "ContractAlreadyExists"
       ) {
-        Logger.info('Contract already deployed');
+        Logger.info("Contract already deployed");
         return "" as TxBroadcastResultOk;
       } else {
         throw new Error(
@@ -326,12 +325,19 @@ export class ApiProvider implements BaseProvider {
       senderKey: sender,
       network: this.network,
       postConditionMode: 0x01, // PostconditionMode.Allow
-      anchorMode: 3
+      anchorMode: 3,
     };
 
-    Logger.debug(`Contract function call on ${contractName}::${functionName} ::${sender}`);
+    Logger.debug(
+      `Contract function call on ${contractName}::${functionName} ::${sender}`
+    );
     const transaction = await makeContractCall(txOptions);
-    return this.handleFunctionTransaction(transaction, this.network, functionName, contractName);
+    return this.handleFunctionTransaction(
+      transaction,
+      this.network,
+      functionName,
+      contractName
+    );
   }
 
   async handleFunctionTransaction(
@@ -366,7 +372,13 @@ export class ApiProvider implements BaseProvider {
     contractName: string,
     count: number = 0
   ): Promise<boolean> {
-    return this.functionProcessingWithSidecar(tx, count, network, functionName, contractName);
+    return this.functionProcessingWithSidecar(
+      tx,
+      count,
+      network,
+      functionName,
+      contractName
+    );
   }
 
   async functionProcessingWithSidecar(
@@ -374,7 +386,7 @@ export class ApiProvider implements BaseProvider {
     count: number = 0,
     network: StacksNetwork,
     functionName: string,
-    contractName: string,
+    contractName: string
   ): Promise<boolean> {
     const url = `${network.coreApiUrl}/extended/v1/tx/${tx}`;
     var result = await fetch(url);
@@ -384,12 +396,20 @@ export class ApiProvider implements BaseProvider {
     }
 
     if (count > 30) {
-      Logger.error(`Failed calling ${contractName}::${functionName} after 30 retries `);
+      Logger.error(
+        `Failed calling ${contractName}::${functionName} after 30 retries `
+      );
       return false;
     }
 
     await this.timeout(3000);
-    return this.functionProcessing(network, tx, functionName, contractName, count + 1);
+    return this.functionProcessing(
+      network,
+      tx,
+      functionName,
+      contractName,
+      count + 1
+    );
   }
 
   formatArguments(

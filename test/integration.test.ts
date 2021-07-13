@@ -37,12 +37,13 @@ test("can increment", async () => {
 
   var something = await txOk(
     counter.increment({
-      sender: 'b8d99fd45da58038d630d9855d3ca2466e8e0f89d3894c4724f0efc9ff4b51f001',
+      sender:
+        "b8d99fd45da58038d630d9855d3ca2466e8e0f89d3894c4724f0efc9ff4b51f001",
       discriminator: "metadata",
     }),
     alice
   );
-  
+
   expect(something.value).toEqual(current + 1);
 
   expect(

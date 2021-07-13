@@ -117,7 +117,7 @@ async function processingWithSidecar(
   count: number = 0
 ): Promise<boolean> {
   var transactionUrl: string = getTransactionUrl(tx);
-  
+
   var result = await fetch(transactionUrl);
   var value = await result.json();
   Logger.debug(`${count}`);
