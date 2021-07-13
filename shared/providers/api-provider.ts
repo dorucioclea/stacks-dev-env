@@ -64,17 +64,22 @@ export class ApiProvider implements BaseProvider {
     };
 
     try{
+      
       var cv = await callReadOnlyFunction(options);
+
       const result = cvToValue(cv);
-      console.log('RESULT::: ', JSON.stringify(result));
+      
       return result;
+
     } catch (error) {
+
       Logger.error('----------------');
       Logger.error(`Error calling readonly function ${request.function.name}`);
       Logger.error('Arguments:');
       Logger.error(JSON.stringify(options));
       Logger.error(JSON.stringify(error));
       Logger.error('----------------');
+      
       return null;
     }
   }
