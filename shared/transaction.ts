@@ -9,21 +9,21 @@ export interface ResultAssets {
 
 export interface TransactionResultOk<Ok> {
   value: Ok;
-  response: ResponseOk<Ok>;
+  response?: ResponseOk<Ok>;
   isOk: true;
   events: any[];
-  costs: {
+  costs?: {
     [key: string]: any;
     runtime: number;
   };
-  assets: ResultAssets;
+  assets?: ResultAssets;
   // TODO: add events
 }
 
 export interface TransactionResultErr<Err> {
   value: Err;
-  response: ResponseErr<Err>;
-  costs: {
+  response?: ResponseErr<Err>;
+  costs?: {
     [key: string]: any;
     runtime: number;
   };
