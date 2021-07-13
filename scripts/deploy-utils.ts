@@ -10,7 +10,7 @@ import {
 } from "@stacks/transactions";
 import { Logger } from "../shared/logger";
 import * as fs from "fs";
-const fetch = require("node-fetch");
+import fetch from "node-fetch";
 
 import { ADDR1, testnetKeyMap } from "../configuration/testnet";
 import { Contracts } from "../shared/types";
@@ -116,23 +116,25 @@ async function processingWithSidecar(
   tx: String,
   count: number = 0
 ): Promise<boolean> {
-  var result = await fetch(getTransactionUrl(tx));
+  var transactionUrl: string = getTransactionUrl(tx);
+
+  var result = await fetch(transactionUrl);
   var value = await result.json();
   Logger.debug(`${count}`);
   if (value.tx_status === "success") {
     Logger.debug(`transaction ${tx} processed`);
-    Logger.debug(value);
+    Logger.debug(JSON.stringify(value));
     return true;
   }
   if (value.tx_status === "pending") {
-    Logger.debug(value);
+    Logger.debug(JSON.stringify(value));
   } else if (count === 3) {
-    Logger.debug(value);
+    Logger.debug(JSON.stringify(value));
   }
 
   if (count > 20) {
     Logger.debug("failed after 10 tries");
-    Logger.debug(value);
+    Logger.debug(JSON.stringify(value));
     return false;
   }
 

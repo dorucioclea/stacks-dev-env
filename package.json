@@ -53,6 +53,7 @@
     "@stacks/common": "^2.0.0-beta.0",
     "@stacks/network": "^1.2.2",
     "@stacks/stacking": "^2.0.0-beta.0",
+    "@stacks/stacks-blockchain-api-types": "^0.1.0-microblocks.0",
     "@stacks/storage": "^2.0.0-beta.0",
     "@stacks/transactions": "^2.0.0-beta.0",
     "@testing-library/jest-dom": "^5.11.4",

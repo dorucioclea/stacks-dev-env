@@ -51,7 +51,7 @@ test("alice can transfer", async () => {
     alice
   );
   expect(
-    result.assets.tokens[alice][
+    result.assets?.tokens[alice][
       `${TOKEN_OWNER.address}.counter-coin::counter-token`
     ]
   ).toEqual("100");

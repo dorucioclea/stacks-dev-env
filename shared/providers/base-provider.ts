@@ -8,7 +8,7 @@ export interface IProviderRequest {
 
 export abstract class BaseProvider {
   // eslint-disable-next-line @typescript-eslint/require-await
-  async callReadOnly(_request: IProviderRequest) {
+  async callReadOnly(_request: IProviderRequest): Promise<any> {
     throw new Error("Not implemented");
   }
 

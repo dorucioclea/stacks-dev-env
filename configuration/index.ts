@@ -7,6 +7,6 @@ export * from "./testnet";
 
 export const NETWORK = new StacksNetworkConfiguration();
 
-export function getTransactionUrl(transaction: String): String {
+export function getTransactionUrl(transaction: String): string {
   return `${NETWORK.coreApiUrl}/extended/v1/tx/${transaction}`;
 }

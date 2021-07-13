@@ -10,9 +10,16 @@ import {
   TxBroadcastResultOk,
   TxBroadcastResultRejected,
   callReadOnlyFunction,
-  ClarityValue
+  ClarityValue,
+  ReadOnlyFunctionOptions,
+  ClarityType,
+  TxBroadcastResult,
+  responseErrorCV,
+  responseOkCV,
+  deserializeCV,
+  noneCV,
 } from "@stacks/transactions";
-import { Transaction } from "../transaction";
+import { Submitter, Transaction, TransactionResult } from "../transaction";
 import { BaseProvider, IProviderRequest } from "./base-provider";
 import {
   Contracts,
@@ -25,9 +32,9 @@ import * as fs from "fs";
 import { getContractIdentifier, getContractNameFromPath } from "../utils";
 import { StacksNetwork } from "@stacks/network";
 import { Logger } from "../logger";
-import { parseToCV } from "../clarity";
-
-// type GetResultType = () => Promise<TransactionResult<any, any>>;
+import { cvToValue, parseToCV } from "../clarity";
+import { SmartContractTransaction } from "@stacks/stacks-blockchain-api-types";
+import { err, ok } from "neverthrow";
 
 export class ApiProvider implements BaseProvider {
   private readonly network: StacksNetwork;
@@ -44,82 +51,111 @@ export class ApiProvider implements BaseProvider {
     this.contractName = contractName;
   }
 
-  async callReadOnly(request: IProviderRequest): Promise<void> {
-    let formattedArguments: [ClarityValue[], IMetadata] = this.formatReadonlyArguments(
-      request.function,
-      request.arguments
-    );
+  async callReadOnly(request: IProviderRequest): Promise<any> {
+    let formattedArguments: [ClarityValue[], IMetadata] =
+      this.formatReadonlyArguments(request.function, request.arguments);
 
     var metadata = formattedArguments[1];
     var args = formattedArguments[0];
 
-    await callReadOnlyFunction({
+    let options: ReadOnlyFunctionOptions = {
       contractAddress: this.deployerAccount.stacksAddress,
       contractName: this.contractName,
       functionArgs: args,
       functionName: request.function.name,
       senderAddress: metadata.sender,
-      network: this.network
-    });
+      network: this.network,
+    };
+
+    try {
+      var cv = await callReadOnlyFunction(options);
+
+      const value = cvToValue(cv);
+
+      switch (cv.type) {
+        case ClarityType.ResponseOk:
+          return ok(value);
+        case ClarityType.ResponseErr:
+          return err(value);
+        default:
+          return value;
+      }
+    } catch (error) {
+      Logger.error("----------------");
+      Logger.error(`Error calling readonly function ${request.function.name}`);
+      Logger.error("Arguments:");
+      Logger.error(JSON.stringify(options));
+      Logger.error(JSON.stringify(error));
+      Logger.error("----------------");
+
+      return err(undefined);
+    }
   }
 
-  callPublic(_request: IProviderRequest): Transaction<any, any> {
-    // let formattedArguments: [string[], IMetadata] = this.formatArguments(
-    //   request.function,
-    //   request.arguments
-    // );
-    // var metadata = formattedArguments[1];
-    // var args = formattedArguments[0];
-    // const submit: Submitter<any, any> = async (_options) => {
-    //   if (metadata.sender == null) {
-    //     throw new Error("Passing `sender` is required.");
-    //   }
+  callPublic(request: IProviderRequest): Transaction<any, any> {
+    let formattedArguments: [string[], IMetadata] = this.formatArguments(
+      request.function,
+      request.arguments
+    );
+    var metadata = formattedArguments[1];
+    var args = formattedArguments[0];
 
-    //   let getResult: GetResultType;
+    const submit: Submitter<any, any> = async (options) => {
+      if (!("sender" in options)) {
+        throw new Error("Passing `sender` is required.");
+      }
 
-    //   try {
-    //     var rawTransactionResult = await this.callContractFunction(
-    //       this.contractName,
-    //       request.function.name,
-    //       metadata.sender,
-    //       args
-    //     );
+      var rawFunctionCallResult = await this.callContractFunction(
+        this.contractName,
+        request.function.name,
+        metadata.sender,
+        args
+      );
 
-    //     getResult = (): Promise<TransactionResult<any, any>> => {
-    //       const resultCV = deserializeCV(
-    //         Buffer.from(rawTransactionResult, "hex")
-    //       );
-    //       const result = cvToValue(resultCV);
+      let successfulFunctionCallResult: TxBroadcastResultOk = "";
 
-    //       return Promise.resolve({
-    //         isOk: true,
-    //         response: responseOkCV(resultCV),
-    //         value: result,
-    //       });
-    //     };
-    //   } catch (error) {
-    //     getResult = (): Promise<TransactionResult<any, any>> => {
-    //       const resultCV = deserializeCV(
-    //         Buffer.from(rawTransactionResult, "hex")
-    //       );
-    //       const result = cvToValue(resultCV);
+      let unsuccessfullFunctionCalResult: TxBroadcastResultRejected;
 
-    //       return Promise.resolve({
-    //         isOk: false,
-    //         response: responseErrorCV(resultCV),
-    //         value: result,
-    //       });
-    //     };
-    //   }
-    //   return {
-    //     getResult,
-    //   };
-    // };
-    // return {
-    //   submit,
-    // };
+      let success: boolean;
+      if ((rawFunctionCallResult as TxBroadcastResultRejected).error) {
+        success = false;
+        unsuccessfullFunctionCalResult =
+          rawFunctionCallResult as TxBroadcastResultRejected;
+      } else {
+        success = true;
+        successfulFunctionCallResult = await ApiProvider.getTransactionById(this.network, rawFunctionCallResult as TxBroadcastResultOk);
+      }
 
-    throw new Error("Not implemented ");
+      const getResult = (): Promise<TransactionResult<any, any>> => {
+        if (success) {
+          const sct: SmartContractTransaction =
+            successfulFunctionCallResult as any as SmartContractTransaction;
+
+          const resultCV = deserializeCV(sct.tx_result.hex);
+
+          const result = cvToValue(resultCV);
+
+          return Promise.resolve({
+            isOk: true,
+            response: responseOkCV(resultCV),
+            value: result,
+            events: sct.events,
+          });
+        } else {
+          return Promise.resolve({
+            isOk: false,
+            value: unsuccessfullFunctionCalResult.error,
+            response: responseErrorCV(noneCV()),
+          });
+        }
+      };
+      return {
+        getResult,
+      };
+    };
+    return {
+      submit,
+    };
   }
 
   public static async fromContracts<T extends Contracts<M>, M>(
@@ -195,8 +231,6 @@ export class ApiProvider implements BaseProvider {
       anchorMode: 3,
     });
 
-    console.log(`deploy contract ${contractName}`);
-
     return this.handleTransaction(transaction, network);
   }
 
@@ -205,12 +239,11 @@ export class ApiProvider implements BaseProvider {
     network: StacksNetwork
   ): Promise<TxBroadcastResultOk> {
     const result = await broadcastTransaction(transaction, network);
-    console.log(result);
     if ((result as TxBroadcastResultRejected).error) {
       if (
         (result as TxBroadcastResultRejected).reason === "ContractAlreadyExists"
       ) {
-        console.log("already deployed");
+        Logger.info("Contract already deployed");
         return "" as TxBroadcastResultOk;
       } else {
         throw new Error(
@@ -225,13 +258,13 @@ export class ApiProvider implements BaseProvider {
       network,
       result as TxBroadcastResultOk
     );
+
     if (!processed) {
       throw new Error(
         `failed to process transaction ${transaction.txid}: transaction not found`
       );
     }
 
-    console.log(processed, result);
     return result as TxBroadcastResultOk;
   }
 
@@ -241,40 +274,36 @@ export class ApiProvider implements BaseProvider {
 
   static async processing(
     network: StacksNetwork,
-    tx: String,
+    tx: string,
     count: number = 0
   ): Promise<boolean> {
     return this.processingWithSidecar(tx, count, network);
   }
 
   static async processingWithSidecar(
-    tx: String,
+    tx: string,
     count: number = 0,
     network: StacksNetwork
   ): Promise<boolean> {
-    const url = `${network.coreApiUrl}/extended/v1/tx/${tx}`;
-    var result = await fetch(url);
-    var value = await result.json();
-    console.log(count);
+    var value = await this.getTransactionById(network, tx);
     if (value.tx_status === "success") {
-      console.log(`transaction ${tx} processed`);
-      console.log(value);
       return true;
-    }
-    if (value.tx_status === "pending") {
-      console.log(value);
-    } else if (count === 3) {
-      console.log(value);
     }
 
     if (count > 20) {
-      console.log("failed after 10 tries");
-      console.log(value);
       return false;
     }
 
     await this.timeout(3000);
     return this.processing(network, tx, count + 1);
+  }
+
+  static async getTransactionById(network: StacksNetwork, txId: string): Promise<any> {
+    const url = `${network.coreApiUrl}/extended/v1/tx/${txId}`;
+    var result = await fetch(url);
+    var value = await result.json();
+
+    return value;
   }
 
   static async timeout(ms: number) {
@@ -300,77 +329,89 @@ export class ApiProvider implements BaseProvider {
       anchorMode: 3,
     };
 
-    Logger.debug(`Contract function call on ${contractName}::${functionName}`);
+    Logger.debug(
+      `Contract function call on ${contractName}::${functionName}`
+    );
+    
     const transaction = await makeContractCall(txOptions);
-    console.log(transaction);
-
-    return this.handleFunctionTransaction(transaction, this.network);
+    return this.handleFunctionTransaction(
+      transaction,
+      this.network,
+      functionName,
+      contractName
+    );
   }
 
   async handleFunctionTransaction(
     transaction: StacksTransaction,
-    network: StacksNetwork
-  ): Promise<TxBroadcastResultOk> {
+    network: StacksNetwork,
+    functionName: string,
+    contractName: string
+  ): Promise<TxBroadcastResult> {
     const result = await broadcastTransaction(transaction, network);
-    console.log(result);
     if ((result as TxBroadcastResultRejected).error) {
-      throw new Error(
-        `failed to handle transaction ${transaction.txid()}: ${JSON.stringify(
-          result
-        )}`
-      );
+      return result as TxBroadcastResultRejected;
     }
 
     const processed = await this.functionProcessing(
       network,
-      result as TxBroadcastResultOk
+      result as TxBroadcastResultOk,
+      functionName,
+      contractName
     );
+
     if (!processed) {
-      throw new Error(
-        `failed to process transaction ${transaction.txid}: transaction not found`
-      );
+      return result as TxBroadcastResultRejected;
     }
 
-    console.log(processed, result);
     return result as TxBroadcastResultOk;
   }
 
   async functionProcessing(
     network: StacksNetwork,
     tx: String,
+    functionName: string,
+    contractName: string,
     count: number = 0
   ): Promise<boolean> {
-    return this.functionProcessingWithSidecar(tx, count, network);
+    return this.functionProcessingWithSidecar(
+      tx,
+      count,
+      network,
+      functionName,
+      contractName
+    );
   }
 
   async functionProcessingWithSidecar(
     tx: String,
     count: number = 0,
-    network: StacksNetwork
+    network: StacksNetwork,
+    functionName: string,
+    contractName: string
   ): Promise<boolean> {
     const url = `${network.coreApiUrl}/extended/v1/tx/${tx}`;
     var result = await fetch(url);
     var value = await result.json();
-    console.log(count);
     if (value.tx_status === "success") {
-      console.log(`transaction ${tx} processed`);
-      console.log(value);
       return true;
     }
-    if (value.tx_status === "pending") {
-      console.log(value);
-    } else if (count === 3) {
-      console.log(value);
-    }
 
-    if (count > 20) {
-      console.log("failed after 10 tries");
-      console.log(value);
+    if (count > 30) {
+      Logger.error(
+        `Failed calling ${contractName}::${functionName} after 30 retries `
+      );
       return false;
     }
 
     await this.timeout(3000);
-    return this.functionProcessing(network, tx, count + 1);
+    return this.functionProcessing(
+      network,
+      tx,
+      functionName,
+      contractName,
+      count + 1
+    );
   }
 
   formatArguments(
@@ -386,10 +427,6 @@ export class ApiProvider implements BaseProvider {
 
     var argsWithoutMetadata =
       metadata.length == 1 ? args.filter((x) => x !== metadataConfig) : args;
-
-    console.log(
-      "argswithoutmetadata --> " + JSON.stringify(argsWithoutMetadata)
-    );
 
     var formatted = argsWithoutMetadata.map((arg, index) => {
       const { type } = func.args[index];
@@ -420,10 +457,6 @@ export class ApiProvider implements BaseProvider {
 
     var argsWithoutMetadata =
       metadata.length == 1 ? args.filter((x) => x !== metadataConfig) : args;
-
-    console.log(
-      "argswithoutmetadata --> " + JSON.stringify(argsWithoutMetadata)
-    );
 
     var formatted = argsWithoutMetadata.map((arg, index) => {
       const { type } = func.args[index];
