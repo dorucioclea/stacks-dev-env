@@ -12,6 +12,7 @@ import {
   callReadOnlyFunction,
   ClarityValue,
   ReadOnlyFunctionOptions,
+  ClarityType,
 } from "@stacks/transactions";
 import { Transaction } from "../transaction";
 import { BaseProvider, IProviderRequest } from "./base-provider";
@@ -27,8 +28,7 @@ import { getContractIdentifier, getContractNameFromPath } from "../utils";
 import { StacksNetwork } from "@stacks/network";
 import { Logger } from "../logger";
 import { cvToValue, parseToCV } from "../clarity";
-
-// type GetResultType = () => Promise<TransactionResult<any, any>>;
+import { err, ok } from "neverthrow";
 
 export class ApiProvider implements BaseProvider {
   private readonly network: StacksNetwork;
@@ -64,13 +64,21 @@ export class ApiProvider implements BaseProvider {
     };
 
     try{
-      
+
       var cv = await callReadOnlyFunction(options);
 
-      const result = cvToValue(cv);
-      
-      return result;
+      const value = cvToValue(cv);
 
+      console.log('VALUE ', value);
+
+      switch (cv.type) {
+        case ClarityType.ResponseOk:
+          return ok(value);
+        case ClarityType.ResponseErr:
+          return err(value);
+        default:
+          return value;
+      }
     } catch (error) {
 
       Logger.error('----------------');
@@ -80,7 +88,7 @@ export class ApiProvider implements BaseProvider {
       Logger.error(JSON.stringify(error));
       Logger.error('----------------');
       
-      return null;
+      return err(undefined);
     }
   }
 
