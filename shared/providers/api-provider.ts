@@ -13,8 +13,13 @@ import {
   ClarityValue,
   ReadOnlyFunctionOptions,
   ClarityType,
+  TxBroadcastResult,
+  responseErrorCV,
+  responseOkCV,
+  deserializeCV,
+  noneCV,
 } from "@stacks/transactions";
-import { Transaction } from "../transaction";
+import { Submitter, Transaction, TransactionResult } from "../transaction";
 import { BaseProvider, IProviderRequest } from "./base-provider";
 import {
   Contracts,
@@ -28,6 +33,7 @@ import { getContractIdentifier, getContractNameFromPath } from "../utils";
 import { StacksNetwork } from "@stacks/network";
 import { Logger } from "../logger";
 import { cvToValue, parseToCV } from "../clarity";
+import { SmartContractTransaction } from '@stacks/stacks-blockchain-api-types';
 import { err, ok } from "neverthrow";
 
 export class ApiProvider implements BaseProvider {
@@ -46,10 +52,8 @@ export class ApiProvider implements BaseProvider {
   }
 
   async callReadOnly(request: IProviderRequest): Promise<any> {
-    let formattedArguments: [ClarityValue[], IMetadata] = this.formatReadonlyArguments(
-      request.function,
-      request.arguments
-    );
+    let formattedArguments: [ClarityValue[], IMetadata] =
+      this.formatReadonlyArguments(request.function, request.arguments);
 
     var metadata = formattedArguments[1];
     var args = formattedArguments[0];
@@ -60,16 +64,15 @@ export class ApiProvider implements BaseProvider {
       functionArgs: args,
       functionName: request.function.name,
       senderAddress: metadata.sender,
-      network: this.network
+      network: this.network,
     };
 
-    try{
-
+    try {
       var cv = await callReadOnlyFunction(options);
 
       const value = cvToValue(cv);
 
-      console.log('VALUE ', value);
+      console.log("VALUE ", value);
 
       switch (cv.type) {
         case ClarityType.ResponseOk:
@@ -80,75 +83,90 @@ export class ApiProvider implements BaseProvider {
           return value;
       }
     } catch (error) {
-
-      Logger.error('----------------');
+      Logger.error("----------------");
       Logger.error(`Error calling readonly function ${request.function.name}`);
-      Logger.error('Arguments:');
+      Logger.error("Arguments:");
       Logger.error(JSON.stringify(options));
       Logger.error(JSON.stringify(error));
-      Logger.error('----------------');
-      
+      Logger.error("----------------");
+
       return err(undefined);
     }
   }
 
-  callPublic(_request: IProviderRequest): Transaction<any, any> {
-    // let formattedArguments: [string[], IMetadata] = this.formatArguments(
-    //   request.function,
-    //   request.arguments
-    // );
-    // var metadata = formattedArguments[1];
-    // var args = formattedArguments[0];
-    // const submit: Submitter<any, any> = async (_options) => {
-    //   if (metadata.sender == null) {
-    //     throw new Error("Passing `sender` is required.");
-    //   }
+  callPublic(request: IProviderRequest): Transaction<any, any> {
+    let formattedArguments: [string[], IMetadata] = this.formatArguments(
+      request.function,
+      request.arguments
+    );
+    var metadata = formattedArguments[1];
+    var args = formattedArguments[0];
 
-    //   let getResult: GetResultType;
+    const submit: Submitter<any, any> = async (options) => {
+      if (!("sender" in options)) {
+        throw new Error("Passing `sender` is required.");
+      }
 
-    //   try {
-    //     var rawTransactionResult = await this.callContractFunction(
-    //       this.contractName,
-    //       request.function.name,
-    //       metadata.sender,
-    //       args
-    //     );
+      var rawFunctionCallResult = await this.callContractFunction(
+        this.contractName,
+        request.function.name,
+        metadata.sender,
+        args
+      );
 
-    //     getResult = (): Promise<TransactionResult<any, any>> => {
-    //       const resultCV = deserializeCV(
-    //         Buffer.from(rawTransactionResult, "hex")
-    //       );
-    //       const result = cvToValue(resultCV);
+      console.log('RAW FUNCTION CALL RESULT ::::: ', rawFunctionCallResult);
+     
+      let successfulFunctionCallResult: TxBroadcastResultOk = '';
 
-    //       return Promise.resolve({
-    //         isOk: true,
-    //         response: responseOkCV(resultCV),
-    //         value: result,
-    //       });
-    //     };
-    //   } catch (error) {
-    //     getResult = (): Promise<TransactionResult<any, any>> => {
-    //       const resultCV = deserializeCV(
-    //         Buffer.from(rawTransactionResult, "hex")
-    //       );
-    //       const result = cvToValue(resultCV);
+      let unsuccessfullFunctionCalResult: TxBroadcastResultRejected;
 
-    //       return Promise.resolve({
-    //         isOk: false,
-    //         response: responseErrorCV(resultCV),
-    //         value: result,
-    //       });
-    //     };
-    //   }
-    //   return {
-    //     getResult,
-    //   };
-    // };
-    // return {
-    //   submit,
-    // };
+      let success: boolean;
+      if ((rawFunctionCallResult as TxBroadcastResultRejected).error) {
+        success = false;
+        unsuccessfullFunctionCalResult = rawFunctionCallResult as TxBroadcastResultRejected;
 
-    throw new Error("Not implemented ");
+      } else {
+        success = true;
+
+        const url = `${this.network.coreApiUrl}/extended/v1/tx/${rawFunctionCallResult}`;
+        var result = await fetch(url);
+        successfulFunctionCallResult = await result.json();
+      }
+
+        const getResult = (): Promise<TransactionResult<any, any>> => {
+          if (success) {
+
+            const sct: SmartContractTransaction = Object.assign({}, JSON.parse((successfulFunctionCallResult as TxBroadcastResultOk)));
+
+      console.log('sct IS ::::: ', JSON.stringify(sct));
+
+            const resultCV = deserializeCV(
+              sct.tx_result.hex
+            );
+  
+            const result = cvToValue(resultCV);
+
+            return Promise.resolve({
+              isOk: true,
+              response: responseOkCV(resultCV),
+              value: result,
+              events: sct.events,
+            });
+          } else {
+            return Promise.resolve({
+              isOk: false,
+              value: unsuccessfullFunctionCalResult.error,
+              response: responseErrorCV(noneCV())
+            });
+          }
+        };
+        return {
+          getResult,
+        };
+    };
+    return {
+      submit,
+    };
   }
 
   public static async fromContracts<T extends Contracts<M>, M>(
@@ -254,6 +272,7 @@ export class ApiProvider implements BaseProvider {
       network,
       result as TxBroadcastResultOk
     );
+
     if (!processed) {
       throw new Error(
         `failed to process transaction ${transaction.txid}: transaction not found`
@@ -284,7 +303,6 @@ export class ApiProvider implements BaseProvider {
     const url = `${network.coreApiUrl}/extended/v1/tx/${tx}`;
     var result = await fetch(url);
     var value = await result.json();
-    console.log(count);
     if (value.tx_status === "success") {
       console.log(`transaction ${tx} processed`);
       console.log(value);
@@ -326,10 +344,10 @@ export class ApiProvider implements BaseProvider {
       senderKey: sender,
       network: this.network,
       postConditionMode: 0x01, // PostconditionMode.Allow
-      anchorMode: 3,
+      anchorMode: 3
     };
 
-    Logger.debug(`Contract function call on ${contractName}::${functionName}`);
+    Logger.debug(`Contract function call on ${contractName}::${functionName} ::${sender}`);
     const transaction = await makeContractCall(txOptions);
     console.log(transaction);
 
@@ -339,25 +357,29 @@ export class ApiProvider implements BaseProvider {
   async handleFunctionTransaction(
     transaction: StacksTransaction,
     network: StacksNetwork
-  ): Promise<TxBroadcastResultOk> {
+  ): Promise<TxBroadcastResult> {
     const result = await broadcastTransaction(transaction, network);
-    console.log(result);
     if ((result as TxBroadcastResultRejected).error) {
-      throw new Error(
-        `failed to handle transaction ${transaction.txid()}: ${JSON.stringify(
-          result
-        )}`
-      );
+      // throw new Error(
+      //   `failed to handle transaction ${transaction.txid()}: ${JSON.stringify(
+      //     result
+      //   )}`
+      // );
+
+      return result as TxBroadcastResultRejected;
     }
 
     const processed = await this.functionProcessing(
       network,
       result as TxBroadcastResultOk
     );
+
     if (!processed) {
-      throw new Error(
-        `failed to process transaction ${transaction.txid}: transaction not found`
-      );
+      // throw new Error(
+      //   `failed to process transaction ${transaction.txid}: transaction not found`
+      // );
+
+      return result as TxBroadcastResultRejected;
     }
 
     console.log(processed, result);
@@ -380,19 +402,21 @@ export class ApiProvider implements BaseProvider {
     const url = `${network.coreApiUrl}/extended/v1/tx/${tx}`;
     var result = await fetch(url);
     var value = await result.json();
-    console.log(count);
+    // console.log(count);
+    
     if (value.tx_status === "success") {
       console.log(`transaction ${tx} processed`);
       console.log(value);
+      console.log(JSON.stringify(value.events[0].asset));
       return true;
     }
-    if (value.tx_status === "pending") {
-      console.log(value);
-    } else if (count === 3) {
-      console.log(value);
-    }
+    // if (value.tx_status === "pending") {
+    //   console.log(value);
+    // } else if (count === 3) {
+    //   console.log(value);
+    // }
 
-    if (count > 20) {
+    if (count > 30) {
       console.log("failed after 10 tries");
       console.log(value);
       return false;
