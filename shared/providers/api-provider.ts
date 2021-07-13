@@ -125,18 +125,26 @@ export class ApiProvider implements BaseProvider {
         success = false;
         unsuccessfullFunctionCalResult = rawFunctionCallResult as TxBroadcastResultRejected;
 
+        console.log('UNSUCCESSFULL CALL RESULT :: ', unsuccessfullFunctionCalResult);
+
       } else {
         success = true;
 
-        const url = `${this.network.coreApiUrl}/extended/v1/tx/${rawFunctionCallResult}`;
+        var transactionID = rawFunctionCallResult as TxBroadcastResultOk;
+
+        console.log(`Fetching transaction with ID ${transactionID}`);
+        
+        const url = `${this.network.coreApiUrl}/extended/v1/tx/${transactionID}`;
         var result = await fetch(url);
         successfulFunctionCallResult = await result.json();
+
+        console.log('SUCCESSFULL CALL RESULT ::::: ', successfulFunctionCallResult);
       }
 
         const getResult = (): Promise<TransactionResult<any, any>> => {
           if (success) {
 
-            const sct: SmartContractTransaction = Object.assign({}, JSON.parse((successfulFunctionCallResult as TxBroadcastResultOk)));
+            const sct: SmartContractTransaction = successfulFunctionCallResult as any as SmartContractTransaction;
 
       console.log('sct IS ::::: ', JSON.stringify(sct));
 

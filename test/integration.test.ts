@@ -4,6 +4,7 @@ import { ADDR1, testnetKeyMap } from "../configuration/testnet";
 import { StacksNetwork } from "@stacks/network";
 import { StacksNetworkConfiguration } from "../configuration/stacks-network";
 import { Logger } from "../shared/logger";
+import { txOk } from "../shared/transaction";
 
 const TOKEN_OWNER = testnetKeyMap[ADDR1];
 const alice = ADDR1;
@@ -26,15 +27,28 @@ beforeAll(async () => {
   // token = deployed.counterCoin.contract;
 });
 
-// test("Dummy test equality", async () => {
-//   expect(0).toEqual(0);
-// });
+test("can increment", async () => {
+  jest.setTimeout(3000000);
 
-test("Starts at zero", async () => {
   const current = await counter.getCounter({
-      sender: alice,
-      discriminator: 'metadata'
+    sender: alice,
+    discriminator: "metadata",
   });
 
-  expect(current).toEqual(0);
+  var something = await txOk(
+    counter.increment({
+      sender: 'b8d99fd45da58038d630d9855d3ca2466e8e0f89d3894c4724f0efc9ff4b51f001',
+      discriminator: "metadata",
+    }),
+    alice
+  );
+  
+  expect(something.value).toEqual(current + 1);
+
+  expect(
+    await counter.getCounter({
+      sender: alice,
+      discriminator: "metadata",
+    })
+  ).toEqual(current + 1);
 });
