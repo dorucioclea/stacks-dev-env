@@ -143,5 +143,5 @@ export const makeTypes = (abi: ClarityAbi) => {
     typings.push(functionLine);
   });
 
-  return typings.map((t) => `  ${t}`).join('\n');
+  return typings.map((t) => `  ${t}`).join("\n");
 };

@@ -5,7 +5,6 @@ import {
 } from "@stacks/transactions";
 import { Result } from "neverthrow";
 
-
 export interface ClarityAbiMap {
   name: string;
   key: ClarityAbiType;

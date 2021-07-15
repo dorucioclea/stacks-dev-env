@@ -25,8 +25,8 @@ const makeHandler = (provider: BaseProvider) => {
           };
         }
       }
-      
-      const foundVariable = contract.variables.find(variable => {
+
+      const foundVariable = contract.variables.find((variable) => {
         return toCamelCase(variable.name) === property;
       });
       if (foundVariable) {
@@ -34,7 +34,7 @@ const makeHandler = (provider: BaseProvider) => {
           return provider.callVariable(foundVariable);
         };
       }
-      const foundMap = contract.maps.find(map => {
+      const foundMap = contract.maps.find((map) => {
         return toCamelCase(map.name) === property;
       });
       if (foundMap) {

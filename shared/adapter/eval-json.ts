@@ -12,7 +12,7 @@ export async function evalJson({
   provider: NativeClarityBinProvider;
   args?: string[];
 }) {
-  const evalCode = `(${functionName} ${args.join(' ')})`;
+  const evalCode = `(${functionName} ${args.join(" ")})`;
   return evalWithCode({
     evalCode,
     provider,
@@ -30,7 +30,7 @@ export const evalWithCode = async ({
   contractAddress: string;
 }) => {
   const receipt = await provider.runCommand(
-    ['eval_at_chaintip', '--costs', contractAddress, provider.dbFilePath],
+    ["eval_at_chaintip", "--costs", contractAddress, provider.dbFilePath],
     {
       stdin: evalCode,
     }

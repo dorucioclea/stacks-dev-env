@@ -18,10 +18,10 @@ export abstract class BaseProvider {
   }
 
   async callMap(_map: ClarityAbiMap, _key: any) {
-    throw new Error('Not implemented');
+    throw new Error("Not implemented");
   }
 
   async callVariable(_variable: ClarityAbiVariable) {
-    throw new Error('Not implemented');
+    throw new Error("Not implemented");
   }
 }

@@ -131,7 +131,10 @@ export class ApiProvider implements BaseProvider {
           rawFunctionCallResult as TxBroadcastResultRejected;
       } else {
         success = true;
-        successfulFunctionCallResult = await ApiProvider.getTransactionById(this.network, rawFunctionCallResult as TxBroadcastResultOk);
+        successfulFunctionCallResult = await ApiProvider.getTransactionById(
+          this.network,
+          rawFunctionCallResult as TxBroadcastResultOk
+        );
       }
 
       const getResult = (): Promise<TransactionResult<any, any>> => {
@@ -306,7 +309,10 @@ export class ApiProvider implements BaseProvider {
     return this.processing(network, tx, count + 1);
   }
 
-  static async getTransactionById(network: StacksNetwork, txId: string): Promise<any> {
+  static async getTransactionById(
+    network: StacksNetwork,
+    txId: string
+  ): Promise<any> {
     const url = `${network.coreApiUrl}/extended/v1/tx/${txId}`;
     var result = await fetch(url);
     var value = await result.json();
@@ -337,10 +343,8 @@ export class ApiProvider implements BaseProvider {
       anchorMode: 3,
     };
 
-    Logger.debug(
-      `Contract function call on ${contractName}::${functionName}`
-    );
-    
+    Logger.debug(`Contract function call on ${contractName}::${functionName}`);
+
     const transaction = await makeContractCall(txOptions);
     return this.handleFunctionTransaction(
       transaction,

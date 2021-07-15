@@ -43,8 +43,6 @@ export class TestProvider implements BaseProvider {
     this.client = client;
   }
 
-  
-
   static async create({
     clarityBin,
     contractFilePath,
@@ -112,10 +110,10 @@ export class TestProvider implements BaseProvider {
     });
     return this.handleEvalResponse(result);
   }
-  
+
   async callVariable(variable: ClarityAbiVariable): Promise<void> {
     let evalCode: string;
-    if (variable.access === 'constant') {
+    if (variable.access === "constant") {
       evalCode = `${variable.name}`;
     } else {
       evalCode = `(var-get ${variable.name})`;
@@ -139,7 +137,7 @@ export class TestProvider implements BaseProvider {
       args: argsFormatted,
       provider: this.clarityBin,
     });
-    
+
     return this.handleEvalResponse(result);
   }
 
@@ -210,19 +208,21 @@ export class TestProvider implements BaseProvider {
   }
 
   formatArgument(type: ClarityAbiType, arg: any) {
-    if (type === 'trait_reference') {
+    if (type === "trait_reference") {
       return `'${arg}`;
     }
     const argCV = parseToCV(arg, type);
     const cvString = cvToString(argCV);
-    if (type === 'principal') {
+    if (type === "principal") {
       return `'${cvString}`;
     }
     return cvString;
   }
 
   handleEvalResponse(result: EvalOk) {
-    const resultCV = deserializeCV(Buffer.from(result.output_serialized, 'hex'));
+    const resultCV = deserializeCV(
+      Buffer.from(result.output_serialized, "hex")
+    );
     const value = cvToValue(resultCV);
     switch (resultCV.type) {
       case ClarityType.ResponseOk:
