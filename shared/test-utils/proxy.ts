@@ -25,6 +25,23 @@ const makeHandler = (provider: BaseProvider) => {
           };
         }
       }
+      
+      const foundVariable = contract.variables.find(variable => {
+        return toCamelCase(variable.name) === property;
+      });
+      if (foundVariable) {
+        return () => {
+          return provider.callVariable(foundVariable);
+        };
+      }
+      const foundMap = contract.maps.find(map => {
+        return toCamelCase(map.name) === property;
+      });
+      if (foundMap) {
+        return (key: any) => {
+          return provider.callMap(foundMap, key);
+        };
+      }
       return null;
     },
   };
