@@ -9,7 +9,7 @@ import {
   isClarityAbiStringUtf8,
   isClarityAbiTuple,
 } from "@stacks/transactions";
-import { ClarityAbi } from "../clarity";
+import { ClarityAbi, ClarityAbiMap } from "../clarity";
 import { toCamelCase } from "../utils";
 
 export const cvFromType = (val: ClarityAbiType) => {
@@ -100,7 +100,7 @@ export const jsTypeFromAbiType = (val: ClarityAbiType): string => {
 };
 
 export const makeTypes = (abi: ClarityAbi) => {
-  let typings = "";
+  const typings: string[] = [];
   abi.functions.forEach((func, index) => {
     if (func.access === "private") return;
     const metadata = `metadata: IMetadata`;
@@ -123,18 +123,25 @@ export const makeTypes = (abi: ClarityAbi) => {
     } else {
       const jsType = jsTypeFromAbiType(func.outputs.type);
       functionLine += `Promise<${jsType}>;`;
-      // const { type } = func.outputs;
-      // if (isClarityAbiResponse(type)) {
-      //   const ok = jsTypeFromAbiType(type.response.ok);
-      //   const err = jsTypeFromAbiType(type.response.error);
-      //   functionLine += `Promise<ClarityTypes.Response<${ok}, ${err}>>;`;
-      // } else {
-      //   const jsType = jsTypeFromAbiType(func.outputs.type);
-      //   functionLine += `Promise<${jsType}>;`;
-      // }
     }
-    typings += `${index === 0 ? "" : "\n"}  ${functionLine}`;
+    typings.push(functionLine);
   });
 
-  return typings;
+  abi.variables.forEach((variable) => {
+    const jsType = jsTypeFromAbiType(variable.type);
+    const functionLine = `${toCamelCase(
+      variable.name
+    )}: () => Promise<${jsType}>;`;
+    typings.push(functionLine);
+  });
+  
+  abi.maps.forEach((map: ClarityAbiMap) => {
+    const keyType = jsTypeFromAbiType(map.key);
+    const valType = jsTypeFromAbiType(map.value);
+    let functionLine = `${toCamelCase(map.name)}: (key: ${keyType}) => `;
+    functionLine += `Promise<${valType} | null>;`;
+    typings.push(functionLine);
+  });
+
+  return typings.map((t) => `  ${t}`).join('\n');
 };
