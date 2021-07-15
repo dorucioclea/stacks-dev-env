@@ -1,6 +1,6 @@
-import { Transaction } from "../../shared/transaction";
-import { ClarityTypes } from "../../shared/clarity/types";
-import { IMetadata } from "../../shared/providers/types";
+import { Transaction } from '../../shared/transaction';
+import { ClarityTypes } from '../../shared/clarity/types';
+import { IMetadata } from '../../shared/providers/types';
 
 // prettier-ignore
 
@@ -13,4 +13,5 @@ export interface CounterCoinContract {
   getName: (metadata: IMetadata) => Promise<ClarityTypes.Response<string, null>>;
   getSymbol: (metadata: IMetadata) => Promise<ClarityTypes.Response<string, null>>;
   getTotalSupply: (metadata: IMetadata) => Promise<ClarityTypes.Response<number, null>>;
+  authorizedMinter: () => Promise<string>;
 }

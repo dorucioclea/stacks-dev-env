@@ -101,7 +101,7 @@ export const jsTypeFromAbiType = (val: ClarityAbiType): string => {
 
 export const makeTypes = (abi: ClarityAbi) => {
   const typings: string[] = [];
-  abi.functions.forEach((func, index) => {
+  abi.functions.forEach((func, _index) => {
     if (func.access === "private") return;
     const metadata = `metadata: IMetadata`;
     let functionLine = `${toCamelCase(func.name)}: `;
@@ -134,7 +134,7 @@ export const makeTypes = (abi: ClarityAbi) => {
     )}: () => Promise<${jsType}>;`;
     typings.push(functionLine);
   });
-  
+
   abi.maps.forEach((map: ClarityAbiMap) => {
     const keyType = jsTypeFromAbiType(map.key);
     const valType = jsTypeFromAbiType(map.value);
