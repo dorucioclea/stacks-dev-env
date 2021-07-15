@@ -1,8 +1,8 @@
 import { NativeClarityBinProvider } from "@blockstack/clarity";
 import { getDefaultBinaryFilePath } from "@blockstack/clarity-native-bin";
 import { getTempFilePath } from "@blockstack/clarity/lib/utils/fsUtil";
+import { AllocationOrAccounts } from "../types";
 import getAllocations from "./get-allocations";
-import { AllocationOrAccounts } from "./types";
 
 export async function createClarityBin({
   allocations,

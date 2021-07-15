@@ -1,5 +1,5 @@
 import { NativeClarityBinProvider } from "@blockstack/clarity";
-import { ExecuteResult } from "./types";
+import { ExecuteResult } from "../types";
 
 export const executeJson = async ({
   contractAddress,

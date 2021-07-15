@@ -1,4 +1,4 @@
-import { Allocation, AllocationOrAccounts } from "./types";
+import { Allocation, AllocationOrAccounts } from "../types";
 
 export default function getAllocations(
   allocations?: AllocationOrAccounts

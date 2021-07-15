@@ -1,5 +1,5 @@
 import { NativeClarityBinProvider } from "@blockstack/clarity";
-import { EvalResult } from "./types";
+import { EvalResult } from "../types";
 
 export async function evalJson({
   contractAddress,
