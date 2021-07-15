@@ -57,6 +57,11 @@ test("alice can transfer", async () => {
   ).toEqual("100");
 });
 
+test("accessing variable", async() => {
+  const result = await counter.decimals();
+  expect(result).toEqual(8);
+})
+
 test("transfer with memo", async () => {
   const result = await txOk(
     token.transfer(100, alice, bob, Buffer.from("hello", "hex"), NO_METADATA),
