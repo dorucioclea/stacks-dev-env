@@ -18,6 +18,8 @@ import {
   responseOkCV,
   deserializeCV,
   noneCV,
+  ClarityAbiMap,
+  ClarityAbiVariable,
 } from "@stacks/transactions";
 import { Submitter, Transaction, TransactionResult } from "../transaction";
 import { BaseProvider, IProviderRequest } from "./base-provider";
@@ -49,6 +51,13 @@ export class ApiProvider implements BaseProvider {
     this.network = network;
     this.deployerAccount = deployerAccount;
     this.contractName = contractName;
+  }
+  
+  callMap(_map: ClarityAbiMap, _key: any): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
+  callVariable(_variable: ClarityAbiVariable): Promise<void> {
+    throw new Error("Method not implemented.");
   }
 
   async callReadOnly(request: IProviderRequest): Promise<any> {

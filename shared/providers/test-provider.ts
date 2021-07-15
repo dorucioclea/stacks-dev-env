@@ -6,6 +6,8 @@ import {
   responseErrorCV,
   responseOkCV,
   ClarityAbiFunction,
+  ClarityAbiMap,
+  ClarityAbiVariable,
 } from "@stacks/transactions";
 
 import { ok, err } from "neverthrow";
@@ -37,6 +39,13 @@ export class TestProvider implements BaseProvider {
   constructor(clarityBin: NativeClarityBinProvider, client: Client) {
     this.clarityBin = clarityBin;
     this.client = client;
+  }
+  
+  callMap(_map: ClarityAbiMap, _key: any): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
+  callVariable(_variable: ClarityAbiVariable): Promise<void> {
+    throw new Error("Method not implemented.");
   }
 
   static async create({
