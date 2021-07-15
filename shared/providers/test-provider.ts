@@ -6,7 +6,6 @@ import {
   responseErrorCV,
   responseOkCV,
   ClarityAbiFunction,
-  ClarityAbiMap,
   ClarityAbiVariable,
 } from "@stacks/transactions";
 
@@ -29,7 +28,7 @@ import {
 import { ClarinetAccounts } from "../configuration";
 import { deployUtilContract } from "../test-utils";
 import { getContractIdentifier, getContractNameFromPath } from "../utils";
-import { parseToCV, cvToValue } from "../clarity";
+import { parseToCV, cvToValue, ClarityAbiMap } from "../clarity";
 import { instanceOfMetadata } from "./types";
 
 export class TestProvider implements BaseProvider {
@@ -40,7 +39,7 @@ export class TestProvider implements BaseProvider {
     this.clarityBin = clarityBin;
     this.client = client;
   }
-  
+
   callMap(_map: ClarityAbiMap, _key: any): Promise<void> {
     throw new Error("Method not implemented.");
   }

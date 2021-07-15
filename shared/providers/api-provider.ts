@@ -18,7 +18,6 @@ import {
   responseOkCV,
   deserializeCV,
   noneCV,
-  ClarityAbiMap,
   ClarityAbiVariable,
 } from "@stacks/transactions";
 import { Submitter, Transaction, TransactionResult } from "../transaction";
@@ -34,7 +33,7 @@ import * as fs from "fs";
 import { getContractIdentifier, getContractNameFromPath } from "../utils";
 import { StacksNetwork } from "@stacks/network";
 import { Logger } from "../logger";
-import { cvToValue, parseToCV } from "../clarity";
+import { ClarityAbiMap, cvToValue, parseToCV } from "../clarity";
 import { SmartContractTransaction } from "@stacks/stacks-blockchain-api-types";
 import { err, ok } from "neverthrow";
 
@@ -52,7 +51,7 @@ export class ApiProvider implements BaseProvider {
     this.deployerAccount = deployerAccount;
     this.contractName = contractName;
   }
-  
+
   callMap(_map: ClarityAbiMap, _key: any): Promise<void> {
     throw new Error("Method not implemented.");
   }

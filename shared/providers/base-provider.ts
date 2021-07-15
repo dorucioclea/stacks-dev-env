@@ -1,4 +1,5 @@
-import { ClarityAbiFunction, ClarityAbiMap, ClarityAbiVariable } from "@stacks/transactions";
+import { ClarityAbiFunction, ClarityAbiVariable } from "@stacks/transactions";
+import { ClarityAbiMap } from "../clarity";
 import { Transaction } from "../transaction";
 
 export interface IProviderRequest {
