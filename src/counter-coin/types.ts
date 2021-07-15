@@ -13,4 +13,5 @@ export interface CounterCoinContract {
   getName: (metadata: IMetadata) => Promise<ClarityTypes.Response<string, null>>;
   getSymbol: (metadata: IMetadata) => Promise<ClarityTypes.Response<string, null>>;
   getTotalSupply: (metadata: IMetadata) => Promise<ClarityTypes.Response<number, null>>;
+  authorizedMinter: () => Promise<string>;
 }

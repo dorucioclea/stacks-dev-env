@@ -6,4 +6,3 @@ export * from "./eval-json";
 export * from "./execute-json";
 export * from "./get-allocations";
 export * from "./get-default-clarity-bin";
-export * from "./types";

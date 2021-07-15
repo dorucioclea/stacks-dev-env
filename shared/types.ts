@@ -1,5 +1,6 @@
 import { NativeClarityBinProvider } from "@blockstack/clarity";
 import { StacksNetwork } from "@stacks/network";
+import { ClarinetAccounts } from "./configuration";
 import type { BaseProvider, DeployerAccount } from "./providers";
 import { ResultAssets } from "./transaction";
 
@@ -100,3 +101,5 @@ export interface FromContractOptions<T> {
 export interface UtilsContract {
   getBlockHeight: Promise<number>;
 }
+
+export type AllocationOrAccounts = ClarinetAccounts | Allocation[];

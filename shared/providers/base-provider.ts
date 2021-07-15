@@ -1,4 +1,5 @@
-import { ClarityAbiFunction } from "@stacks/transactions";
+import { ClarityAbiFunction, ClarityAbiVariable } from "@stacks/transactions";
+import { ClarityAbiMap } from "../clarity";
 import { Transaction } from "../transaction";
 
 export interface IProviderRequest {
@@ -13,6 +14,14 @@ export abstract class BaseProvider {
   }
 
   callPublic(_request: IProviderRequest): Transaction<any, any> {
+    throw new Error("Not implemented");
+  }
+
+  async callMap(_map: ClarityAbiMap, _key: any) {
+    throw new Error("Not implemented");
+  }
+
+  async callVariable(_variable: ClarityAbiVariable) {
     throw new Error("Not implemented");
   }
 }

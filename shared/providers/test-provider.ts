@@ -6,6 +6,8 @@ import {
   responseErrorCV,
   responseOkCV,
   ClarityAbiFunction,
+  ClarityAbiVariable,
+  ClarityAbiType,
 } from "@stacks/transactions";
 
 import { ok, err } from "neverthrow";
@@ -15,6 +17,7 @@ import {
   ContractInstances,
   Contracts,
   CreateOptions,
+  EvalOk,
   FromContractOptions,
 } from "../types";
 
@@ -23,11 +26,12 @@ import {
   getDefaultClarityBin,
   evalJson,
   executeJson,
+  evalWithCode,
 } from "../adapter";
 import { ClarinetAccounts } from "../configuration";
 import { deployUtilContract } from "../test-utils";
 import { getContractIdentifier, getContractNameFromPath } from "../utils";
-import { parseToCV, cvToValue } from "../clarity";
+import { parseToCV, cvToValue, ClarityAbiMap } from "../clarity";
 import { instanceOfMetadata } from "./types";
 
 export class TestProvider implements BaseProvider {
@@ -96,6 +100,32 @@ export class TestProvider implements BaseProvider {
     return instances;
   }
 
+  async callMap(map: ClarityAbiMap, key: any): Promise<void> {
+    const keyFormatted = this.formatArgument(map.key, key);
+    const evalCode = `(map-get? ${map.name} ${keyFormatted})`;
+    const result = await evalWithCode({
+      contractAddress: this.client.name,
+      evalCode,
+      provider: this.clarityBin,
+    });
+    return this.handleEvalResponse(result);
+  }
+
+  async callVariable(variable: ClarityAbiVariable): Promise<void> {
+    let evalCode: string;
+    if (variable.access === "constant") {
+      evalCode = `${variable.name}`;
+    } else {
+      evalCode = `(var-get ${variable.name})`;
+    }
+    const result = await evalWithCode({
+      contractAddress: this.client.name,
+      evalCode,
+      provider: this.clarityBin,
+    });
+    return this.handleEvalResponse(result);
+  }
+
   async callReadOnly(request: IProviderRequest) {
     const argsFormatted = this.formatArguments(
       request.function,
@@ -107,18 +137,8 @@ export class TestProvider implements BaseProvider {
       args: argsFormatted,
       provider: this.clarityBin,
     });
-    const resultCV = deserializeCV(
-      Buffer.from(result.output_serialized, "hex")
-    );
-    const value = cvToValue(resultCV);
-    switch (resultCV.type) {
-      case ClarityType.ResponseOk:
-        return ok(value);
-      case ClarityType.ResponseErr:
-        return err(value);
-      default:
-        return value;
-    }
+
+    return this.handleEvalResponse(result);
   }
 
   callPublic(request: IProviderRequest): Transaction<any, any> {
@@ -181,17 +201,36 @@ export class TestProvider implements BaseProvider {
 
     var formatted = argsWithoutMetadata.map((arg, index) => {
       const { type } = func.args[index];
-      if (type === "trait_reference") {
-        return `'${arg}`;
-      }
-      const argCV = parseToCV(arg, type);
-      const cvString = cvToString(argCV);
-      if (type === "principal") {
-        return `'${cvString}`;
-      }
-      return cvString;
+      return this.formatArgument(type, arg);
     });
 
     return formatted;
+  }
+
+  formatArgument(type: ClarityAbiType, arg: any) {
+    if (type === "trait_reference") {
+      return `'${arg}`;
+    }
+    const argCV = parseToCV(arg, type);
+    const cvString = cvToString(argCV);
+    if (type === "principal") {
+      return `'${cvString}`;
+    }
+    return cvString;
+  }
+
+  handleEvalResponse(result: EvalOk) {
+    const resultCV = deserializeCV(
+      Buffer.from(result.output_serialized, "hex")
+    );
+    const value = cvToValue(resultCV);
+    switch (resultCV.type) {
+      case ClarityType.ResponseOk:
+        return ok(value);
+      case ClarityType.ResponseErr:
+        return err(value);
+      default:
+        return value;
+    }
   }
 }

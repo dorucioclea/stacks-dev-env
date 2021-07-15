@@ -18,6 +18,7 @@ import {
   responseOkCV,
   deserializeCV,
   noneCV,
+  ClarityAbiVariable,
 } from "@stacks/transactions";
 import { Submitter, Transaction, TransactionResult } from "../transaction";
 import { BaseProvider, IProviderRequest } from "./base-provider";
@@ -32,7 +33,7 @@ import * as fs from "fs";
 import { getContractIdentifier, getContractNameFromPath } from "../utils";
 import { StacksNetwork } from "@stacks/network";
 import { Logger } from "../logger";
-import { cvToValue, parseToCV } from "../clarity";
+import { ClarityAbiMap, cvToValue, parseToCV } from "../clarity";
 import { SmartContractTransaction } from "@stacks/stacks-blockchain-api-types";
 import { err, ok } from "neverthrow";
 
@@ -49,6 +50,13 @@ export class ApiProvider implements BaseProvider {
     this.network = network;
     this.deployerAccount = deployerAccount;
     this.contractName = contractName;
+  }
+
+  callMap(_map: ClarityAbiMap, _key: any): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
+  callVariable(_variable: ClarityAbiVariable): Promise<void> {
+    throw new Error("Method not implemented.");
   }
 
   async callReadOnly(request: IProviderRequest): Promise<any> {
@@ -123,7 +131,10 @@ export class ApiProvider implements BaseProvider {
           rawFunctionCallResult as TxBroadcastResultRejected;
       } else {
         success = true;
-        successfulFunctionCallResult = await ApiProvider.getTransactionById(this.network, rawFunctionCallResult as TxBroadcastResultOk);
+        successfulFunctionCallResult = await ApiProvider.getTransactionById(
+          this.network,
+          rawFunctionCallResult as TxBroadcastResultOk
+        );
       }
 
       const getResult = (): Promise<TransactionResult<any, any>> => {
@@ -298,7 +309,10 @@ export class ApiProvider implements BaseProvider {
     return this.processing(network, tx, count + 1);
   }
 
-  static async getTransactionById(network: StacksNetwork, txId: string): Promise<any> {
+  static async getTransactionById(
+    network: StacksNetwork,
+    txId: string
+  ): Promise<any> {
     const url = `${network.coreApiUrl}/extended/v1/tx/${txId}`;
     var result = await fetch(url);
     var value = await result.json();
@@ -329,10 +343,8 @@ export class ApiProvider implements BaseProvider {
       anchorMode: 3,
     };
 
-    Logger.debug(
-      `Contract function call on ${contractName}::${functionName}`
-    );
-    
+    Logger.debug(`Contract function call on ${contractName}::${functionName}`);
+
     const transaction = await makeContractCall(txOptions);
     return this.handleFunctionTransaction(
       transaction,
