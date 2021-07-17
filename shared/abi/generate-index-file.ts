@@ -8,7 +8,7 @@ export function generateIndexFile({
   contractFile: string;
   address: string;
 }) {
-  const contractName = getContractNameFromPath(contractFile).normalize();
+  const contractName = getContractNameFromPath(contractFile);
 
   const contractTitle = toCamelCase(contractName, true);
   const varName = toCamelCase(contractName);
@@ -40,8 +40,8 @@ export const ${varName}Info: Contract<${contractType}> = {
 
 function contractWithSubDirectory(contractName: string) {
   if (contractName.endsWith(CONTRACT_EXTENSION)) {
-    return `${CONTRACT_FOLDER}\\\\${contractName}`;
+    return `${CONTRACT_FOLDER}/${contractName}`;
   }
 
-  return `${CONTRACT_FOLDER}\\\\${contractName}.clar`;
+  return `${CONTRACT_FOLDER}/${contractName}.clar`;
 }
