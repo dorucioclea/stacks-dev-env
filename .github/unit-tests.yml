@@ -1,0 +1,16 @@
+name: Unit tests
+on: push
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install modules
+      run: |
+        # make file runnable, might not be necessary
+        chmod +x "${GITHUB_WORKSPACE}/install-by-branch.sh"
+
+        # run script
+        "${GITHUB_WORKSPACE}/install-by-branch.sh"
+    - name: Run tests
+      run: yarn unit-test
