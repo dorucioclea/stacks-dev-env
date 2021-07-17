@@ -25,3 +25,10 @@ jobs:
         "${GITHUB_WORKSPACE}/install-by-branch.sh"
     - name: Run tests
       run: yarn unit-test
+    - name: Format
+      run: yarn pretty
+    - name: Commit changes
+      uses: stefanzweifel/git-auto-commit-action@v4.11.0
+      with:
+        commit_message: "style(formatting): apply formatting changes"
+        branch: ${{ github.head_ref }}
