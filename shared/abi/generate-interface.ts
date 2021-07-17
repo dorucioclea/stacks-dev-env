@@ -11,7 +11,6 @@ export async function generateInterface({
   provider: NativeClarityBinProvider;
   contractAddress?: string;
 }): Promise<ClarityAbi> {
-
   let contractName = getContractNameFromPath(contractFile);
   const receipt = await provider.runCommand([
     "launch",

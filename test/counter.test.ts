@@ -57,10 +57,10 @@ test("alice can transfer", async () => {
   ).toEqual("100");
 });
 
-test("accessing variable", async() => {
+test("accessing variable", async () => {
   const result = await counter.decimals();
   expect(result).toEqual(8);
-})
+});
 
 test("transfer with memo", async () => {
   const result = await txOk(

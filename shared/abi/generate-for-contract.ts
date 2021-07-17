@@ -9,7 +9,7 @@ import {
   generateInterface,
 } from ".";
 
-import { normalize } from 'path';
+import { normalize } from "path";
 
 export async function generateFilesForContract({
   contractFile: _contractFile,
@@ -25,8 +25,11 @@ export async function generateFilesForContract({
   dirName?: string;
 }) {
   const currentPath = process.cwd();
-  var normalizedPath =  normalize(currentPath).replace(/\\/g, '/');
-  const contractFile = resolve(normalizedPath, _contractFile).replace(/\\/g, '/');
+  var normalizedPath = normalize(currentPath).replace(/\\/g, "/");
+  const contractFile = resolve(normalizedPath, _contractFile).replace(
+    /\\/g,
+    "/"
+  );
   const contractName = getContractNameFromPath(contractFile);
 
   const abi = await generateInterface({
@@ -41,7 +44,7 @@ export async function generateFilesForContract({
   }
 
   const indexFile = generateIndexFile({
-    contractFile: relative(process.cwd(), contractFile).replace(/\\/g, '/'),
+    contractFile: relative(process.cwd(), contractFile).replace(/\\/g, "/"),
     address: contractAddress || "",
   });
 

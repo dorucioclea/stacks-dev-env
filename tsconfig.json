@@ -36,10 +36,5 @@
   "sourceMap": true,
   "strict": true,
 
-  "include": [
-    "./test/**/*.ts",
-    "./node_modules/bn.js-typings/index.d.ts",
-    "configuration/testnet.ts",
-    "configuration/stacks-network.ts"
-  ]
+  "include": ["./test/**/*.ts"]
 }
