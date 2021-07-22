@@ -24,6 +24,21 @@
     "tests",
     "environment"
   ],
+  "contributors": [
+		{
+			"name": "Doru Cioclea Octavian",
+			"url": "https://github.com/dorucioclea",
+			"img": "https://avatars.githubusercontent.com/u/39082034?s=460&v=4",
+			"info": [
+				"🔥"
+			]
+		},
+		{
+			"name": "You?",
+			"img": "https://joeschmoe.io/api/v1/random",
+			"url": "https://github.com/dorucioclea/stacks-dev-env/blob/master/CONTRIBUTING.md"
+		}
+	],
   "author": "DoruC",
   "license": "ISC",
   "bugs": {
