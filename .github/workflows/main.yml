@@ -19,10 +19,10 @@ jobs:
     - name: Install modules
       run: |
         # make file runnable, might not be necessary
-        chmod +x "${GITHUB_WORKSPACE}/install-by-branch.sh"
+        chmod +x "${GITHUB_WORKSPACE}/install.sh"
 
         # run script
-        "${GITHUB_WORKSPACE}/install-by-branch.sh"
+        "${GITHUB_WORKSPACE}/install.sh"
     - name: Run tests
       run: yarn unit-test
     - name: Format
