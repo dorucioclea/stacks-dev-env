@@ -1,7 +1,7 @@
 {
-  "name": "stacks-dev-env",
+  "name": "dev-environment",
   "version": "1.0.0",
-  "description": "Stacks local dev environment with minimal test project",
+  "description": "Stacks local development environment for clarity contracts",
   "main": "index.js",
   "scripts": {
     "unit-test": "jest counter.test.ts",
