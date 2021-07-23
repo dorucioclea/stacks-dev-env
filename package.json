@@ -10,7 +10,8 @@
     "generate": "ts-node scripts/abi.ts",
     "deploy": "ts-node scripts/deploy.ts",
     "eol": "npx eolConverter \"contracts/*.clar\"",
-    "pretty": "prettier --write \"./**/*.{js,jsx,ts,json}\""
+    "pretty": "prettier --write \"./**/*.{js,jsx,ts,json}\"",
+    "doc": "npx @appnest/readme generate --line=https://raw.githubusercontent.com/dorucioclea/stacks-dev-env/master/assets/line.png"
   },
   "repository": {
     "type": "git",
@@ -25,20 +26,20 @@
     "environment"
   ],
   "contributors": [
-		{
-			"name": "Doru Cioclea Octavian",
-			"url": "https://github.com/dorucioclea",
-			"img": "https://avatars.githubusercontent.com/u/39082034?s=460&v=4",
-			"info": [
-				"🔥"
-			]
-		},
-		{
-			"name": "You?",
-			"img": "https://joeschmoe.io/api/v1/random",
-			"url": "https://github.com/dorucioclea/stacks-dev-env/blob/master/CONTRIBUTING.md"
-		}
-	],
+    {
+      "name": "Doru Cioclea Octavian",
+      "url": "https://github.com/dorucioclea",
+      "img": "https://avatars.githubusercontent.com/u/39082034?s=460&v=4",
+      "info": [
+        "🔥"
+      ]
+    },
+    {
+      "name": "You?",
+      "img": "https://joeschmoe.io/api/v1/random",
+      "url": "https://github.com/dorucioclea/stacks-dev-env/blob/master/CONTRIBUTING.md"
+    }
+  ],
   "author": "DoruC",
   "license": "ISC",
   "bugs": {
@@ -46,6 +47,7 @@
   },
   "homepage": "https://github.com/dorucioclea/stacks-dev-env#readme",
   "devDependencies": {
+    "@appnest/readme": "^1.2.7",
     "@ltd/j-toml": "^1.12.2",
     "@stacks/wallet-sdk": "^1.0.0-wallet-sdk.4",
     "@types/chai": "^4.2.17",
